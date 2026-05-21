@@ -6,15 +6,17 @@
 <title>Reel — Gasto Fantasma · naberol.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
+
 html,body{
   width:100vw;height:100vh;
   background:#061A3A;
   overflow:hidden;
   font-family:'Inter',sans-serif;
 }
+
 #stage{
   position:fixed;top:0;left:0;
   width:1080px;height:1920px;
@@ -23,95 +25,142 @@ html,body{
   overflow:hidden;
 }
 
-/* ── PARTICLES ── */
-.particle{
-  position:absolute;
-  border-radius:50%;
-  background:rgba(30,122,245,0.18);
-  pointer-events:none;
-}
-
-/* ── GRADIENT GLOW ── */
+/* ── GLOW ── */
 #glow{
   position:absolute;
-  width:900px;height:900px;
+  width:1000px;height:1000px;
   top:50%;left:50%;
   transform:translate(-50%,-50%);
-  background:radial-gradient(circle,rgba(30,122,245,0.13) 0%,transparent 70%);
+  background:radial-gradient(circle,rgba(30,122,245,0.12) 0%,transparent 68%);
   animation:glowPulse 6s ease-in-out infinite alternate;
   pointer-events:none;
   z-index:0;
 }
 @keyframes glowPulse{
-  from{transform:translate(-50%,-50%) scale(1);}
+  from{transform:translate(-50%,-50%) scale(1.0);}
   to{transform:translate(-50%,-50%) scale(1.05);}
 }
 
-/* ── GRID ── */
-#grid{
-  position:absolute;inset:0;
-  pointer-events:none;z-index:0;
-  opacity:0;animation:gridPulse 8s ease-in-out infinite alternate;
+/* ── PARTICLES ── */
+.particle{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(30,122,245,0.15);
+  pointer-events:none;
+  z-index:1;
 }
-@keyframes gridPulse{from{opacity:0.03;}to{opacity:0.07;};}
 
 /* ── LOGO ── */
 #logo{
   position:absolute;top:52px;left:52px;
   display:flex;align-items:center;gap:8px;
-  z-index:100;opacity:0;
-  animation:logoIn 0.6s 0.2s ease forwards;
+  z-index:100;
+  opacity:0;
+  transition:opacity 0.32s ease;
 }
-@keyframes logoIn{to{opacity:1;}}
-#logo-dot{width:8px;height:8px;border-radius:50%;background:#1E7AF5;flex-shrink:0;}
-#logo-text{font-weight:700;font-size:18px;color:#fff;line-height:1;}
+#logo.visible{opacity:1;}
+.logo-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:#1E7AF5;
+  flex-shrink:0;
+}
+.logo-text{
+  font-weight:700;font-size:18px;
+  color:#fff;line-height:1;
+}
 
-/* ── REPLAY BUTTON (outside canvas, top-right) ── */
+/* ── REPLAY ── */
 #replay-btn{
   position:fixed;top:12px;right:12px;
   font-family:'Courier New',monospace;font-size:13px;
   color:rgba(255,255,255,0.7);
-  background:rgba(6,26,58,0.8);
+  background:rgba(6,26,58,0.85);
   border:1px solid rgba(255,255,255,0.25);
   border-radius:8px;padding:8px 16px;
-  cursor:pointer;z-index:9999;letter-spacing:0.04em;
+  cursor:pointer;z-index:9999;
+  letter-spacing:0.04em;
+  transition:color 0.2s,border-color 0.2s;
 }
 #replay-btn:hover{color:#fff;border-color:rgba(255,255,255,0.6);}
+
+/* ── ILLUSTRATIONS ── */
+#illus-layer{
+  position:absolute;
+  top:440px;left:0;width:1080px;
+  display:flex;justify-content:center;
+  z-index:5;
+  pointer-events:none;
+}
+.illus{
+  position:absolute;
+  width:600px;
+  height:auto;
+  opacity:0;
+  transform:scale(0.9) translateY(20px);
+  transition:
+    opacity 0.6s cubic-bezier(0.16,1,0.3,1),
+    transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.illus.active{
+  opacity:1;
+  transform:scale(1.0) translateY(0px);
+  animation:illusFloat 4s ease-in-out infinite alternate;
+}
+.illus.exit{
+  opacity:0;
+  transform:scale(0.9) translateY(-20px);
+  transition:
+    opacity 0.6s cubic-bezier(0.55,0,1,0.45),
+    transform 0.6s cubic-bezier(0.55,0,1,0.45);
+}
+@keyframes illusFloat{
+  from{transform:scale(1.0) translateY(-8px);}
+  to{transform:scale(1.0) translateY(8px);}
+}
 
 /* ── TEXT LAYER ── */
 #text-layer{
   position:absolute;
-  top:0;left:0;width:1080px;height:1920px;
-  pointer-events:none;z-index:10;
+  top:0;left:0;
+  width:1080px;height:1920px;
+  pointer-events:none;
+  z-index:20;
 }
-.txt-block{
+
+/* generic text block */
+.tb{
   position:absolute;
   left:0;width:1080px;
   text-align:center;
+  padding:0 80px;
   will-change:transform,opacity,filter;
   opacity:0;
+  transform:translateX(120px);
+  filter:blur(8px);
+  transition:none;
 }
-
-/* ── STICKMAN ── */
-#stickman{
-  position:absolute;z-index:20;
-  width:120px;height:180px;
-  bottom:420px;
-  will-change:transform;
-  transform:translateX(1080px);
+.tb.in{
+  opacity:1;
+  transform:translateX(0);
+  filter:blur(0);
+  transition:
+    opacity 0.4s cubic-bezier(0.16,1,0.3,1),
+    transform 0.4s cubic-bezier(0.16,1,0.3,1),
+    filter 0.4s cubic-bezier(0.16,1,0.3,1);
 }
-#stickman svg{overflow:visible;}
-
-/* ── FLOATING COINS ── */
-.coin{
-  position:absolute;
+.tb.out{
   opacity:0;
-  pointer-events:none;
-  z-index:15;
+  transform:translateX(-120px);
+  filter:blur(6px);
+  transition:
+    opacity 0.4s cubic-bezier(0.55,0,1,0.45),
+    transform 0.4s cubic-bezier(0.55,0,1,0.45),
+    filter 0.4s cubic-bezier(0.55,0,1,0.45);
 }
 
 /* ── GS AMOUNTS ── */
-.gs-amount{
+.gs-float{
   position:absolute;
   font-family:'Courier New',monospace;
   font-size:32px;
@@ -122,106 +171,112 @@ html,body{
   will-change:transform,opacity;
 }
 
-/* ── ICONS ── */
-.icon-card{
-  position:absolute;
-  display:flex;flex-direction:column;
-  align-items:center;gap:10px;
-  opacity:0;
-  will-change:transform,opacity;
-  z-index:15;
-}
-.icon-label{
-  font-family:'Courier New',monospace;
-  font-size:18px;color:#fff;
-  letter-spacing:0.04em;text-align:center;
-}
-
 /* ── MILLONES ── */
-#millones{
+#millones-wrap{
   position:absolute;
   top:50%;left:50%;
-  transform:translate(-50%,-50%) scale(1.6);
+  transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;
   opacity:0;
-  font-weight:700;font-size:200px;color:#F59E0B;
-  text-align:center;white-space:nowrap;
-  z-index:20;will-change:transform,opacity;
-  line-height:1;
+  z-index:30;
+  pointer-events:none;
 }
-#millones-underline{
-  position:absolute;
-  top:50%;left:50%;
-  margin-top:90px;
-  height:5px;background:#F59E0B;border-radius:4px;
-  width:0;transform:translateX(-50%);
-  z-index:20;
+#millones-txt{
+  font-weight:700;font-size:190px;color:#F59E0B;
+  white-space:nowrap;line-height:1;
+  transform:scale(1.6);
+  opacity:0;
+  transition:none;
 }
-
-/* ── NOTEBOOK ── */
-#notebook{
-  position:absolute;
-  opacity:0;z-index:18;
-  bottom:400px;left:80px;
-  will-change:transform,opacity;
-}
-
-/* ── PENCIL ── */
-#pencil{
-  position:absolute;
-  opacity:0;z-index:19;
-  bottom:480px;left:130px;
-  will-change:transform,opacity;
-  animation:pencilBob 0.5s ease-in-out infinite alternate paused;
-}
-@keyframes pencilBob{from{transform:translateY(0);}to{transform:translateY(-8px);}}
-
-/* ── QMARK ── */
-#qmark{
-  position:absolute;
-  font-size:80px;color:#F59E0B;
-  opacity:0;z-index:20;
-  animation:qPulse 1.5s ease-in-out infinite alternate paused;
-  will-change:opacity,transform;
-}
-@keyframes qPulse{
-  from{transform:scale(1);filter:drop-shadow(0 0 10px #F59E0B88);}
-  to{transform:scale(1.08);filter:drop-shadow(0 0 22px #F59E0Bcc);}
+#millones-line{
+  width:0;height:5px;
+  background:#F59E0B;
+  border-radius:4px;
+  margin-top:10px;
+  transition:width 0.4s ease 0.35s;
 }
 
 /* ── CTA BUTTON ── */
 #cta-btn{
   position:absolute;
-  left:50%;transform:translateX(-50%) translateY(60px);
+  left:50%;
+  bottom:380px;
+  transform:translateX(-50%) translateY(80px);
   opacity:0;
   background:#061A3A;
-  border:1.5px solid #fff;border-radius:14px;
+  border:1.5px solid #fff;
+  border-radius:14px;
   padding:24px 48px;
   display:flex;flex-direction:column;align-items:center;gap:6px;
   z-index:30;
   will-change:transform,opacity;
+  transition:
+    opacity 0.5s cubic-bezier(0.16,1,0.3,1),
+    transform 0.5s cubic-bezier(0.16,1,0.3,1);
+  white-space:nowrap;
+}
+#cta-btn.visible{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+  animation:ctaPulse 2s ease-in-out infinite;
+}
+@keyframes ctaPulse{
+  0%,100%{transform:translateX(-50%) scale(1.0);}
+  50%{transform:translateX(-50%) scale(1.02);}
 }
 #cta-escribime{font-weight:700;font-size:36px;color:#fff;}
 #cta-handle{
-  font-family:'Courier New',monospace;font-size:22px;
-  color:rgba(255,255,255,0.7);letter-spacing:0.04em;
-}
-@keyframes ctaPulse{
-  0%,100%{transform:translateX(-50%) scale(1);}
-  50%{transform:translateX(-50%) scale(1.02);}
+  font-family:'Courier New',monospace;
+  font-size:22px;color:rgba(255,255,255,0.7);
+  letter-spacing:0.04em;
 }
 
 /* ── BRAND CLOSE ── */
 #brand-close{
-  position:absolute;bottom:90px;left:0;width:1080px;
-  text-align:center;opacity:0;z-index:30;
+  position:absolute;
+  bottom:260px;left:0;width:1080px;
+  text-align:center;
+  opacity:0;
+  z-index:30;
+  transition:opacity 0.5s ease;
 }
+#brand-close.visible{opacity:1;}
 #brand-name{font-weight:700;font-size:24px;color:#fff;margin-bottom:6px;}
 #brand-tag{font-weight:400;font-size:16px;color:rgba(255,255,255,0.7);}
 
-/* ── FADE OVERLAY for loop ── */
+/* ── EXAMPLES BLOCK ── */
+#examples-list{
+  position:absolute;
+  left:0;width:1080px;
+  text-align:center;
+  z-index:20;
+  top:1350px;
+}
+.ex-row{
+  display:flex;align-items:center;justify-content:center;
+  gap:14px;
+  margin-bottom:22px;
+  opacity:0;
+  transform:translateX(60px);
+  transition:
+    opacity 0.4s cubic-bezier(0.16,1,0.3,1),
+    transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.ex-row.in{opacity:1;transform:translateX(0);}
+.ex-coin{flex-shrink:0;}
+.ex-text{
+  font-weight:600;font-size:40px;color:#fff;
+  line-height:1.2;
+}
+
+/* ── FADE OVERLAY ── */
 #fade-overlay{
-  position:absolute;inset:0;background:#061A3A;
-  opacity:0;z-index:200;pointer-events:none;
+  position:absolute;inset:0;
+  background:#061A3A;
+  opacity:0;
+  z-index:200;
+  pointer-events:none;
+  transition:opacity 0.6s ease;
 }
 </style>
 </head>
@@ -234,159 +289,121 @@ html,body{
   <!-- Glow -->
   <div id="glow"></div>
 
-  <!-- Grid SVG -->
-  <svg id="grid" viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid slice">
-    <defs>
-      <pattern id="gridpat" width="90" height="90" patternUnits="userSpaceOnUse">
-        <path d="M90 0L0 0 0 90" fill="none" stroke="#4F99FF" stroke-width="0.5"/>
-      </pattern>
-    </defs>
-    <rect width="1080" height="1920" fill="url(#gridpat)"/>
-  </svg>
+  <!-- Particles injected by JS -->
 
   <!-- Logo -->
   <div id="logo">
-    <div id="logo-dot"></div>
-    <span id="logo-text">naberol.</span>
+    <div class="logo-dot"></div>
+    <span class="logo-text">naberol.</span>
+  </div>
+
+  <!-- Illustrations -->
+  <div id="illus-layer">
+    <img class="illus" id="il1" src="01_pensativo.svg"      alt="pensativo"/>
+    <img class="illus" id="il2" src="02_suscripciones.svg"  alt="suscripciones"/>
+    <img class="illus" id="il3" src="03_dinero_perdido.svg" alt="dinero perdido"/>
+    <img class="illus" id="il4" src="04_registrando.svg"    alt="registrando"/>
+    <img class="illus" id="il5" src="05_feliz_ordenado.svg" alt="feliz ordenado"/>
   </div>
 
   <!-- Text layer -->
   <div id="text-layer">
-    <!-- Block 0: opening question -->
-    <div class="txt-block" id="tb0" style="top:320px;">
-      <div id="tb0a" style="font-weight:700;font-size:80px;color:#fff;line-height:1.1;">¿Sabés qué es</div>
-      <div id="tb0b" style="font-weight:700;font-size:100px;color:#F59E0B;line-height:1.1;margin-top:12px;">un gasto fantasma?</div>
+
+    <!-- tb0: opening -->
+    <div class="tb" id="tb0" style="top:230px;">
+      <div style="font-weight:700;font-size:80px;color:#fff;line-height:1.15;">¿Sabés qué es</div>
+      <div id="tb0b" style="font-weight:700;font-size:100px;color:#F59E0B;line-height:1.1;margin-top:10px;
+           opacity:0;transform:translateX(120px);filter:blur(8px);transition:none;">
+        un gasto fantasma?
+      </div>
     </div>
 
-    <!-- Block 1: te lo cuento -->
-    <div class="txt-block" id="tb1" style="top:340px;">
+    <!-- tb1: te lo cuento -->
+    <div class="tb" id="tb1" style="top:240px;">
       <div style="font-weight:600;font-size:60px;color:#fff;line-height:1.15;">Te lo cuento...</div>
-      <div id="tb1b" style="font-weight:700;font-size:72px;color:#fff;line-height:1.15;margin-top:18px;opacity:0;">porque <span style="color:#00B37A;">vos</span> también tenés uno.</div>
+      <div id="tb1b" style="font-weight:700;font-size:72px;color:#fff;line-height:1.2;margin-top:18px;
+           opacity:0;transform:translateX(60px);filter:blur(6px);transition:none;">
+        porque <span style="color:#00B37A;">vos</span> también tenés uno.
+      </div>
     </div>
 
-    <!-- Block 2: gastos chiquitos -->
-    <div class="txt-block" id="tb2" style="top:310px;">
-      <div style="font-weight:700;font-size:64px;color:#fff;line-height:1.15;">Son esos gastos chiquitos</div>
-      <div style="font-weight:600;font-size:48px;color:rgba(255,255,255,0.85);line-height:1.3;margin-top:14px;">que se te van <span style="color:#F59E0B;">sin que los veas.</span></div>
+    <!-- tb2: gastos chiquitos -->
+    <div class="tb" id="tb2" style="top:220px;">
+      <div style="font-weight:700;font-size:64px;color:#fff;line-height:1.2;">Son esos gastos chiquitos</div>
+      <div style="font-weight:600;font-size:48px;color:rgba(255,255,255,0.85);line-height:1.3;margin-top:14px;">
+        que se te van <span style="color:#F59E0B;">sin que los veas.</span>
+      </div>
     </div>
 
-    <!-- Block 3: por ejemplo -->
-    <div class="txt-block" id="tb3" style="top:260px;">
+    <!-- tb3: por ejemplo heading -->
+    <div class="tb" id="tb3" style="top:230px;">
       <div style="font-weight:600;font-size:44px;color:rgba(255,255,255,0.7);">Por ejemplo...</div>
     </div>
 
-    <!-- Block 4: parecen pequeños -->
-    <div class="txt-block" id="tb4" style="top:350px;">
+    <!-- tb4: parecen pequeños -->
+    <div class="tb" id="tb4" style="top:240px;">
       <div style="font-weight:700;font-size:72px;color:#fff;line-height:1.1;">Parecen pequeños.</div>
     </div>
 
-    <!-- Block 5: pero al final -->
-    <div class="txt-block" id="tb5" style="top:350px;">
+    <!-- tb5: pero al final -->
+    <div class="tb" id="tb5" style="top:240px;">
       <div style="font-weight:600;font-size:56px;color:#fff;line-height:1.15;">Pero al final del año...</div>
     </div>
 
-    <!-- Block 6: pasa porque -->
-    <div class="txt-block" id="tb6" style="top:310px;">
+    <!-- tb6: pasa porque -->
+    <div class="tb" id="tb6" style="top:220px;">
       <div style="font-weight:600;font-size:56px;color:#fff;line-height:1.15;">Pasa porque</div>
-      <div style="font-weight:700;font-size:80px;color:#F59E0B;line-height:1.1;margin-top:10px;" id="tb6b">no los registrás.</div>
+      <div id="tb6b" style="font-weight:700;font-size:80px;color:#F59E0B;line-height:1.1;margin-top:12px;
+           opacity:0;transform:scale(1.3);transition:none;">
+        no los registrás.
+      </div>
     </div>
 
-    <!-- Block 7: CTA copy -->
-    <div class="txt-block" id="tb7" style="top:270px;">
-      <div style="font-weight:600;font-size:52px;color:#fff;line-height:1.2;">Encontrar tus gastos fantasma...</div>
-      <div style="font-weight:700;font-size:60px;color:#fff;line-height:1.2;margin-top:16px;">es lo primero que <span style="color:#00B37A;">ORDENA</span> tu negocio.</div>
+    <!-- tb7: CTA copy -->
+    <div class="tb" id="tb7" style="top:200px;">
+      <div style="font-weight:600;font-size:52px;color:#fff;line-height:1.25;">
+        Encontrar tus gastos fantasma...
+      </div>
+      <div style="font-weight:700;font-size:60px;color:#fff;line-height:1.2;margin-top:16px;">
+        es lo primero que <span style="color:#00B37A;">ORDENA</span> tu negocio.
+      </div>
+    </div>
+
+  </div><!-- /text-layer -->
+
+  <!-- Examples list (separate layer, sits below illustrations area) -->
+  <div id="examples-list">
+    <div class="ex-row" id="ex1">
+      <svg class="ex-coin" width="24" height="24" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke="#00B37A" stroke-width="2" fill="none"/>
+        <text x="12" y="16" text-anchor="middle" font-size="10" fill="#00B37A" font-weight="700">$</text>
+      </svg>
+      <span class="ex-text">Suscripciones que no usás</span>
+    </div>
+    <div class="ex-row" id="ex2">
+      <svg class="ex-coin" width="24" height="24" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke="#00B37A" stroke-width="2" fill="none"/>
+        <text x="12" y="16" text-anchor="middle" font-size="10" fill="#00B37A" font-weight="700">$</text>
+      </svg>
+      <span class="ex-text">Apps olvidadas</span>
+    </div>
+    <div class="ex-row" id="ex3">
+      <svg class="ex-coin" width="24" height="24" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke="#00B37A" stroke-width="2" fill="none"/>
+        <text x="12" y="16" text-anchor="middle" font-size="10" fill="#00B37A" font-weight="700">$</text>
+      </svg>
+      <span class="ex-text">Comisiones bancarias</span>
     </div>
   </div>
 
   <!-- MILLONES -->
-  <div id="millones">MILLONES.</div>
-  <div id="millones-underline"></div>
-
-  <!-- Stickman -->
-  <div id="stickman">
-    <svg id="sm-svg" width="120" height="180" viewBox="0 0 120 180">
-      <!-- Head -->
-      <circle cx="60" cy="24" r="20" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <!-- Body -->
-      <line id="sm-body" x1="60" y1="44" x2="60" y2="110" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <!-- Left arm -->
-      <line id="sm-arm-l" x1="60" y1="70" x2="30" y2="95" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <!-- Right arm -->
-      <line id="sm-arm-r" x1="60" y1="70" x2="90" y2="95" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <!-- Left leg -->
-      <line id="sm-leg-l" x1="60" y1="110" x2="38" y2="158" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <!-- Right leg -->
-      <line id="sm-leg-r" x1="60" y1="110" x2="82" y2="158" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-    </svg>
+  <div id="millones-wrap">
+    <div id="millones-txt">MILLONES.</div>
+    <div id="millones-line"></div>
   </div>
 
-  <!-- Q mark -->
-  <div id="qmark" style="bottom:600px;left:630px;">?</div>
-
-  <!-- Floating coins container -->
-  <div id="coins-container" style="position:absolute;inset:0;pointer-events:none;z-index:15;"></div>
-
-  <!-- GS amounts container -->
-  <div id="gs-container" style="position:absolute;inset:0;pointer-events:none;z-index:15;"></div>
-
-  <!-- Icon cards -->
-  <div class="icon-card" id="icon-netflix" style="left:120px;bottom:560px;">
-    <svg width="90" height="90" viewBox="0 0 90 90">
-      <rect x="5" y="5" width="80" height="80" rx="10" fill="#E50914"/>
-      <text x="45" y="67" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="64" fill="white">N</text>
-    </svg>
-    <div class="icon-label">Suscripciones</div>
-  </div>
-
-  <div class="icon-card" id="icon-spotify" style="left:460px;bottom:560px;">
-    <svg width="90" height="90" viewBox="0 0 90 90">
-      <circle cx="45" cy="45" r="42" fill="#1DB954"/>
-      <path d="M22 34 Q45 26 68 32" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
-      <path d="M25 46 Q45 38 65 44" stroke="white" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-      <path d="M28 58 Q45 51 62 56" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
-    </svg>
-    <div class="icon-label">Apps que no usás</div>
-  </div>
-
-  <div class="icon-card" id="icon-bank" style="left:790px;bottom:560px;">
-    <svg width="90" height="90" viewBox="0 0 90 90">
-      <rect x="10" y="78" width="70" height="6" rx="2" stroke="#4F99FF" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-      <rect x="18" y="72" width="54" height="8" rx="2" stroke="#4F99FF" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-      <line x1="24" y1="36" x2="24" y2="70" stroke="#4F99FF" stroke-width="2.2" stroke-linecap="round"/>
-      <line x1="38" y1="36" x2="38" y2="70" stroke="#4F99FF" stroke-width="2.2" stroke-linecap="round"/>
-      <line x1="52" y1="36" x2="52" y2="70" stroke="#4F99FF" stroke-width="2.2" stroke-linecap="round"/>
-      <line x1="66" y1="36" x2="66" y2="70" stroke="#4F99FF" stroke-width="2.2" stroke-linecap="round"/>
-      <line x1="10" y1="36" x2="80" y2="36" stroke="#4F99FF" stroke-width="2.2" stroke-linecap="round"/>
-      <path d="M10 36L45 10L80 36" stroke="#4F99FF" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <text x="45" y="30" text-anchor="middle" font-size="14" fill="#4F99FF" font-weight="700">%</text>
-    </svg>
-    <div class="icon-label">Comisiones bancarias</div>
-  </div>
-
-  <!-- Notebook -->
-  <div id="notebook">
-    <svg width="80" height="100" viewBox="0 0 80 100">
-      <rect x="10" y="5" width="60" height="88" rx="6" stroke="#4F99FF" stroke-width="2.2" fill="none"/>
-      <line x1="22" y1="28" x2="58" y2="28" stroke="#4F99FF" stroke-width="2" stroke-linecap="round"/>
-      <line x1="22" y1="42" x2="58" y2="42" stroke="#4F99FF" stroke-width="2" stroke-linecap="round"/>
-      <line x1="22" y1="56" x2="50" y2="56" stroke="#4F99FF" stroke-width="2" stroke-linecap="round"/>
-      <line x1="22" y1="70" x2="45" y2="70" stroke="#4F99FF" stroke-width="2" stroke-linecap="round"/>
-      <rect x="5" y="18" width="8" height="60" rx="3" stroke="#4F99FF" stroke-width="2.2" fill="none"/>
-    </svg>
-  </div>
-
-  <!-- Pencil -->
-  <div id="pencil">
-    <svg width="36" height="36" viewBox="0 0 36 36">
-      <path d="M6 28L8 20L26 6L30 10L12 28Z" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M24 8L28 12" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-      <path d="M8 20L12 24" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-      <path d="M6 28L4 32L8 30Z" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
-
-  <!-- CTA Button -->
-  <div id="cta-btn" style="bottom:560px;">
+  <!-- CTA -->
+  <div id="cta-btn">
     <div id="cta-escribime">Escribime</div>
     <div id="cta-handle">@naberolconta</div>
   </div>
@@ -400,10 +417,10 @@ html,body{
   <!-- Fade overlay -->
   <div id="fade-overlay"></div>
 
-</div><!-- end stage -->
+</div><!-- /stage -->
 
 <script>
-// ── SCALE STAGE ──
+/* ── SCALE ── */
 function scaleStage(){
   const s=document.getElementById('stage');
   const scale=Math.min(window.innerWidth/1080,window.innerHeight/1920);
@@ -414,485 +431,396 @@ function scaleStage(){
 window.addEventListener('resize',scaleStage);
 scaleStage();
 
-// ── PARTICLES ──
-(function createParticles(){
+/* ── PARTICLES ── */
+(function spawnParticles(){
   const stage=document.getElementById('stage');
-  for(let i=0;i<12;i++){
+  const configs=[
+    [160,300,8,11,-50,80],  [820,500,6,9,60,-70],
+    [350,800,5,8,-70,50],   [700,1100,7,10,55,-65],
+    [200,1300,4,7,-55,75],  [900,900,6,9,65,-50],
+    [500,200,7,10,-60,60],  [100,1600,5,8,75,-55],
+    [850,1500,4,7,-45,80],  [440,1700,8,11,50,-70],
+    [680,400,6,9,-80,45],   [270,1100,5,8,70,-60],
+  ];
+  configs.forEach(([lx,ty,sz1,sz2,dx,dy])=>{
     const p=document.createElement('div');
     p.className='particle';
-    const sz=4+Math.random()*4;
-    p.style.cssText=`
-      width:${sz}px;height:${sz}px;
-      top:${Math.random()*100}%;
-      left:${Math.random()*100}%;
-      z-index:1;
-    `;
-    const dur=8+Math.random()*7;
-    const dx=(-60+Math.random()*120);
-    const dy=(-60+Math.random()*120);
-    p.style.animation=`none`;
+    const sz=sz1+Math.random()*(sz2-sz1);
+    p.style.cssText=`width:${sz}px;height:${sz}px;left:${lx}px;top:${ty}px;`;
     stage.appendChild(p);
-    animateParticle(p,dx,dy,dur);
-  }
-})();
-function animateParticle(el,dx,dy,dur){
-  const start={x:parseFloat(el.style.left),y:parseFloat(el.style.top)};
-  let t0=null;
-  function step(ts){
-    if(!t0)t0=ts;
-    const prog=((ts-t0)/(dur*1000))%1;
-    const ease=prog<0.5?2*prog*prog:(1-(2*(1-prog))*(2*(1-prog)));
-    el.style.left=(start.x+dx*ease)+'%';
-    el.style.top=(start.y+dy*ease)+'%';
+    const dur=(8+Math.random()*7)*1000;
+    let start=null;
+    function step(ts){
+      if(!start)start=ts;
+      const t=((ts-start)/dur)%1;
+      const e=t<0.5?2*t*t:1-2*(1-t)*(1-t);
+      p.style.transform=`translate(${dx*e}px,${dy*e}px)`;
+      requestAnimationFrame(step);
+    }
     requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
+  });
+})();
+
+/* ── HELPERS ── */
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+
+function forceReflow(el){void el.offsetWidth;}
+
+function tbIn(el,delay=0){
+  return new Promise(res=>{
+    setTimeout(()=>{
+      el.style.transition='none';
+      el.classList.remove('out');
+      el.style.opacity='0';
+      el.style.transform='translateX(120px)';
+      el.style.filter='blur(8px)';
+      forceReflow(el);
+      el.classList.add('in');
+      setTimeout(res,400);
+    },delay);
+  });
+}
+function tbOut(el){
+  return new Promise(res=>{
+    el.classList.remove('in');
+    el.classList.add('out');
+    setTimeout(res,400);
+  });
+}
+function hide(el){
+  el.classList.remove('in','out');
+  el.style.opacity='0';
+  el.style.transform='translateX(120px)';
+  el.style.filter='blur(8px)';
+  el.style.transition='none';
 }
 
-// ── UTILS ──
-function css(el,props){Object.assign(el.style,props);}
-
-function slideIn(el,delay=0,dur=400){
+function subIn(el,delay=0,dur=400){
   return new Promise(res=>{
-    el.style.opacity='0';
-    el.style.transform='translateX(120px)';
-    el.style.filter='blur(8px)';
-    el.style.transition='none';
     setTimeout(()=>{
       el.style.transition=`opacity ${dur}ms cubic-bezier(0.16,1,0.3,1),
         transform ${dur}ms cubic-bezier(0.16,1,0.3,1),
         filter ${dur}ms cubic-bezier(0.16,1,0.3,1)`;
       el.style.opacity='1';
-      el.style.transform='translateX(0)';
+      el.style.transform='translateX(0) scale(1)';
       el.style.filter='blur(0)';
       setTimeout(res,dur);
     },delay);
   });
 }
 
-function slideOut(el,dur=400){
+/* ── ILLUSTRATION CROSSFADE ── */
+let currentIllus=null;
+function showIllus(id){
   return new Promise(res=>{
-    el.style.transition=`opacity ${dur}ms cubic-bezier(0.55,0,1,0.45),
-      transform ${dur}ms cubic-bezier(0.55,0,1,0.45),
-      filter ${dur}ms cubic-bezier(0.55,0,1,0.45)`;
-    el.style.opacity='0';
-    el.style.transform='translateX(-120px)';
-    el.style.filter='blur(6px)';
-    setTimeout(res,dur);
-  });
-}
-
-function fadeIn(el,delay=0,dur=400){
-  return new Promise(res=>{
-    el.style.opacity='0';
-    el.style.transition='none';
-    setTimeout(()=>{
-      el.style.transition=`opacity ${dur}ms ease`;
-      el.style.opacity='1';
-      setTimeout(res,dur);
-    },delay);
-  });
-}
-function fadeOut(el,delay=0,dur=400){
-  return new Promise(res=>{
-    setTimeout(()=>{
-      el.style.transition=`opacity ${dur}ms ease`;
-      el.style.opacity='0';
-      setTimeout(res,dur+delay);
-    },delay);
-  });
-}
-
-const wait=ms=>new Promise(r=>setTimeout(r,ms));
-
-// ── STICKMAN POSES ──
-const smArmL=document.getElementById('sm-arm-l');
-const smArmR=document.getElementById('sm-arm-r');
-const smLegL=document.getElementById('sm-leg-l');
-const smLegR=document.getElementById('sm-leg-r');
-
-function smPose(pose){
-  const sm=document.getElementById('stickman');
-  // remove breathing during pose change
-  switch(pose){
-    case 'idle':
-      smArmL.setAttribute('x2','30');smArmL.setAttribute('y2','95');
-      smArmR.setAttribute('x2','90');smArmR.setAttribute('y2','95');
-      break;
-    case 'curious': // hand on chin
-      smArmL.setAttribute('x2','55');smArmL.setAttribute('y2','60');
-      smArmR.setAttribute('x2','90');smArmR.setAttribute('y2','95');
-      break;
-    case 'point': // point toward viewer (right arm forward/down)
-      smArmL.setAttribute('x2','30');smArmL.setAttribute('y2','95');
-      smArmR.setAttribute('x2','100');smArmR.setAttribute('y2','75');
-      break;
-    case 'shrug': // arms up
-      smArmL.setAttribute('x2','22');smArmL.setAttribute('y2','52');
-      smArmR.setAttribute('x2','98');smArmR.setAttribute('y2','52');
-      break;
-    case 'look-left':
-      smArmL.setAttribute('x2','30');smArmL.setAttribute('y2','95');
-      smArmR.setAttribute('x2','90');smArmR.setAttribute('y2','95');
-      break;
-    case 'shock': // arms rotated up -45deg
-      smArmL.setAttribute('x2','18');smArmL.setAttribute('y2','42');
-      smArmR.setAttribute('x2','102');smArmR.setAttribute('y2','42');
-      break;
-    case 'write':
-      smArmL.setAttribute('x2','30');smArmL.setAttribute('y2','95');
-      smArmR.setAttribute('x2','72');smArmR.setAttribute('y2','100');
-      break;
-    case 'thumbs-up':
-      smArmL.setAttribute('x2','30');smArmL.setAttribute('y2','95');
-      smArmR.setAttribute('x2','102');smArmR.setAttribute('y2','50');
-      break;
-  }
-}
-
-// Breathing
-function breathe(){
-  const sm=document.getElementById('stickman');
-  let up=true;
-  setInterval(()=>{
-    const cur=parseFloat(sm.style.marginBottom||'0');
-    sm.style.transition='margin-bottom 2s ease-in-out';
-    sm.style.marginBottom=(up?'3':'0')+'px';
-    up=!up;
-  },2000);
-}
-
-// ── COINS ──
-let coinIntervalId=null;
-function startCoins(){
-  const cont=document.getElementById('coins-container');
-  const sm=document.getElementById('stickman');
-  coinIntervalId=setInterval(()=>{
-    const coin=document.createElement('div');
-    coin.className='coin';
-    const x=580+(-40+Math.random()*80);
-    const y=700+(-40+Math.random()*60);
-    coin.style.left=x+'px';
-    coin.style.top=y+'px';
-    coin.innerHTML=`<svg width="28" height="28" viewBox="0 0 28 28">
-      <circle cx="14" cy="14" r="12" stroke="#00B37A" stroke-width="2" fill="none"/>
-      <text x="14" y="19" text-anchor="middle" font-size="12" fill="#00B37A" font-weight="700">$</text>
-    </svg>`;
-    cont.appendChild(coin);
-    coin.style.transition='opacity 0.4s ease, transform 2.5s ease';
-    setTimeout(()=>{
-      coin.style.opacity='0.85';
-      coin.style.transform=`translateY(-${60+Math.random()*80}px)`;
+    const next=document.getElementById(id);
+    if(currentIllus && currentIllus!==next){
+      const prev=currentIllus;
+      prev.classList.remove('active');
+      prev.classList.add('exit');
       setTimeout(()=>{
-        coin.style.opacity='0';
-        setTimeout(()=>coin.remove(),600);
-      },1800);
-    },50);
-  },600);
-}
-function stopCoins(){
-  if(coinIntervalId){clearInterval(coinIntervalId);coinIntervalId=null;}
+        prev.classList.remove('exit');
+        prev.style.opacity='0';
+      },600);
+    }
+    setTimeout(()=>{
+      next.style.transition='none';
+      next.style.opacity='0';
+      next.style.transform='scale(0.9) translateY(20px)';
+      forceReflow(next);
+      next.classList.add('active');
+      currentIllus=next;
+      setTimeout(res,600);
+    },currentIllus?200:0);
+  });
 }
 
-// ── GS AMOUNTS ──
+/* ── GS FLOATS ── */
 const gsData=[
-  {text:'Gs. 50.000',x:200,y:700},
-  {text:'Gs. 80.000',x:700,y:740},
-  {text:'Gs. 25.000',x:380,y:800},
-  {text:'Gs. 120.000',x:580,y:680},
+  {text:'Gs. 50.000', x:160, y:1250},
+  {text:'Gs. 80.000', x:700, y:1280},
+  {text:'Gs. 25.000', x:380, y:1350},
+  {text:'Gs. 120.000',x:560, y:1200},
 ];
 let gsEls=[];
-function showGsAmounts(){
-  const cont=document.getElementById('gs-container');
+function spawnGs(){
+  const stage=document.getElementById('stage');
   gsData.forEach((d,i)=>{
     setTimeout(()=>{
       const el=document.createElement('div');
-      el.className='gs-amount';
+      el.className='gs-float';
       el.textContent=d.text;
       el.style.left=d.x+'px';
       el.style.top=d.y+'px';
-      cont.appendChild(el);
+      stage.appendChild(el);
       gsEls.push(el);
-      el.style.transition='opacity 0.5s ease, transform 4s ease';
-      setTimeout(()=>{el.style.opacity='1';},50);
+      forceReflow(el);
+      el.style.transition='opacity 0.5s ease, transform 3s ease';
+      el.style.opacity='1';
+      el.style.transform=`translateY(-${120+Math.random()*80}px)`;
+      setTimeout(()=>{
+        el.style.opacity='0';
+      },2000);
     },i*300);
   });
 }
-function convergeGs(callback){
-  gsEls.forEach((el,i)=>{
-    const cx=1080/2-50;
-    const cy=1920/2-60;
-    const cur=el.getBoundingClientRect();
-    el.style.transition='opacity 0.8s ease, transform 0.8s ease';
-    el.style.transform=`translate(${cx-gsData[i].x}px,${cy-gsData[i].y}px) scale(0.3)`;
+function collapseGs(cb){
+  gsEls.forEach(el=>{
+    el.style.transition='opacity 0.4s ease, transform 0.6s ease';
+    el.style.transform='translate(calc(540px - '+el.style.left+'), calc(960px - '+el.style.top+')) scale(0.1)';
     el.style.opacity='0';
   });
   setTimeout(()=>{
     gsEls.forEach(e=>e.remove());
     gsEls=[];
-    if(callback)callback();
-  },900);
+    if(cb)cb();
+  },700);
 }
 
-// ── ICON FLOATS ──
-function iconFloat(id){
-  const el=document.getElementById(id);
-  let up=true;
-  return setInterval(()=>{
-    el.style.transition='transform 2s ease-in-out';
-    el.style.transform=`translateY(${up?-5:5}px)`;
-    up=!up;
-  },2000);
+/* ── MILLONES ── */
+function showMillones(){
+  return new Promise(res=>{
+    const wrap=document.getElementById('millones-wrap');
+    const txt=document.getElementById('millones-txt');
+    const line=document.getElementById('millones-line');
+    wrap.style.opacity='1';
+    txt.style.transition='none';
+    txt.style.opacity='0';
+    txt.style.transform='scale(1.6)';
+    forceReflow(txt);
+    txt.style.transition='opacity 0.35s cubic-bezier(0.16,1,0.3,1), transform 0.35s cubic-bezier(0.16,1,0.3,1)';
+    txt.style.opacity='1';
+    txt.style.transform='scale(1)';
+    setTimeout(()=>{
+      line.style.width='640px';
+      setTimeout(res,450);
+    },350);
+  });
+}
+function hideMillones(){
+  const wrap=document.getElementById('millones-wrap');
+  const txt=document.getElementById('millones-txt');
+  const line=document.getElementById('millones-line');
+  txt.style.transition='opacity 0.4s ease';
+  txt.style.opacity='0';
+  line.style.transition='opacity 0.3s ease';
+  line.style.opacity='0';
+  setTimeout(()=>{
+    wrap.style.opacity='0';
+    txt.style.transform='scale(1.6)';
+    txt.style.opacity='0';
+    line.style.width='0';
+    line.style.opacity='1';
+  },450);
 }
 
-// ── MAIN TIMELINE ──
-let timeouts=[];
-function T(fn,ms){timeouts.push(setTimeout(fn,ms));}
+/* ── RESET STATE ── */
+let timers=[];
+function T(fn,ms){timers.push(setTimeout(fn,ms));}
 
-function clearAll(){
-  timeouts.forEach(clearTimeout);
-  timeouts=[];
-  stopCoins();
-  // hide everything
-  ['tb0','tb1','tb2','tb3','tb4','tb5','tb6','tb7'].forEach(id=>{
+function resetAll(){
+  timers.forEach(clearTimeout);
+  timers=[];
+
+  // hide logo
+  document.getElementById('logo').classList.remove('visible');
+
+  // hide all text blocks
+  ['tb0','tb1','tb2','tb3','tb4','tb5','tb6','tb7'].forEach(id=>hide(document.getElementById(id)));
+  // reset sub-elements
+  const tb0b=document.getElementById('tb0b');
+  tb0b.style.opacity='0';tb0b.style.transform='translateX(120px)';tb0b.style.filter='blur(8px)';tb0b.style.transition='none';
+  const tb1b=document.getElementById('tb1b');
+  tb1b.style.opacity='0';tb1b.style.transform='translateX(60px)';tb1b.style.filter='blur(6px)';tb1b.style.transition='none';
+  const tb6b=document.getElementById('tb6b');
+  tb6b.style.opacity='0';tb6b.style.transform='scale(1.3)';tb6b.style.transition='none';
+
+  // reset illustrations
+  ['il1','il2','il3','il4','il5'].forEach(id=>{
     const el=document.getElementById(id);
-    el.style.opacity='0';el.style.transform='translateX(0)';el.style.filter='none';
+    el.classList.remove('active','exit');
+    el.style.cssText='opacity:0;transform:scale(0.9) translateY(20px);transition:none;';
   });
-  document.getElementById('tb1b').style.opacity='0';
-  document.getElementById('tb6b').style.opacity='0';
-  ['icon-netflix','icon-spotify','icon-bank'].forEach(id=>{
+  currentIllus=null;
+
+  // examples
+  ['ex1','ex2','ex3'].forEach(id=>{
     const el=document.getElementById(id);
-    el.style.opacity='0';el.style.animation='none';
+    el.classList.remove('in');
+    el.style.opacity='0';el.style.transform='translateX(60px)';
   });
-  document.getElementById('millones').style.opacity='0';
-  document.getElementById('millones').style.transform='translate(-50%,-50%) scale(1.6)';
-  document.getElementById('millones-underline').style.width='0';
-  document.getElementById('notebook').style.opacity='0';
-  document.getElementById('pencil').style.opacity='0';
-  document.getElementById('pencil').style.animationPlayState='paused';
-  document.getElementById('qmark').style.opacity='0';
-  document.getElementById('qmark').style.animationPlayState='paused';
-  document.getElementById('cta-btn').style.opacity='0';
-  document.getElementById('cta-btn').style.animation='none';
-  document.getElementById('cta-btn').style.transform='translateX(-50%) translateY(60px)';
-  document.getElementById('brand-close').style.opacity='0';
-  document.getElementById('gs-container').innerHTML='';
-  document.getElementById('coins-container').innerHTML='';
+
+  // millones
+  const wrap=document.getElementById('millones-wrap');
+  wrap.style.opacity='0';
+  document.getElementById('millones-txt').style.opacity='0';
+  document.getElementById('millones-txt').style.transform='scale(1.6)';
+  document.getElementById('millones-txt').style.transition='none';
+  document.getElementById('millones-line').style.width='0';
+  document.getElementById('millones-line').style.opacity='1';
+  document.getElementById('millones-line').style.transition='none';
+
+  // cta
+  const cta=document.getElementById('cta-btn');
+  cta.classList.remove('visible');
+  cta.style.animation='none';
+  cta.style.opacity='0';
+  cta.style.transform='translateX(-50%) translateY(80px)';
+
+  // brand close
+  document.getElementById('brand-close').classList.remove('visible');
+
+  // remove stray gs els
+  gsEls.forEach(e=>e.remove());
   gsEls=[];
 }
 
+/* ── MAIN REEL ── */
 async function startReel(){
-  clearAll();
   const fo=document.getElementById('fade-overlay');
-  fo.style.transition='opacity 0.4s ease';
   fo.style.opacity='1';
+  await wait(50);
+  resetAll();
   await wait(400);
-  fo.style.transition='opacity 0.8s ease';
   fo.style.opacity='0';
-
-  const sm=document.getElementById('stickman');
-
-  // ── T=0: stickman walks in + opening question ──
-  sm.style.transition='transform 1.2s cubic-bezier(0.16,1,0.3,1)';
-  sm.style.transform='translateX(580px)';
-  smPose('curious');
-
   await wait(300);
+
+  // ── T=0 ──
+  document.getElementById('logo').classList.add('visible');
+  showIllus('il1');
   const tb0=document.getElementById('tb0');
-  await slideIn(tb0,0,500);
+  await tbIn(tb0,200);
+  // second line staggered
+  const tb0b=document.getElementById('tb0b');
+  await wait(800);
+  await subIn(tb0b,0,400);
 
-  // Q mark
-  const qm=document.getElementById('qmark');
-  qm.style.animationPlayState='running';
-  await fadeIn(qm,200,400);
-
-  // ── T=4: "Te lo cuento" ──
+  // ── T=4 ──
   T(async()=>{
     const tb1=document.getElementById('tb1');
-    slideOut(tb0,400);
+    tbOut(tb0);
     await wait(250);
-    await slideIn(tb1,0,400);
-    smPose('point');
-    await wait(300);
-    await fadeOut(qm,0,300);
-    qm.style.animationPlayState='paused';
-    // second phrase
+    await tbIn(tb1,0);
+    // second line 800ms later
     const tb1b=document.getElementById('tb1b');
-    await wait(500);
-    tb1b.style.transition='opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1)';
-    tb1b.style.transform='translateX(60px)';
-    await wait(20);
-    tb1b.style.opacity='1';
-    tb1b.style.transform='translateX(0)';
+    await wait(800);
+    await subIn(tb1b,0,400);
   },4000);
 
-  // ── T=8: gastos chiquitos ──
+  // ── T=8 ──
   T(async()=>{
     const tb1=document.getElementById('tb1');
     const tb2=document.getElementById('tb2');
-    await slideOut(tb1,400);
+    tbOut(tb1);
+    showIllus('il2');
     await wait(250);
-    await slideIn(tb2,0,400);
-    smPose('shrug');
-    sm.style.transition='transform 0.8s ease';
-    sm.style.transform='translateX(520px)';
-    startCoins();
+    await tbIn(tb2,0);
   },8000);
 
-  // ── T=12: por ejemplo + icons ──
+  // ── T=13 ──
   T(async()=>{
-    stopCoins();
-    document.getElementById('coins-container').innerHTML='';
     const tb2=document.getElementById('tb2');
     const tb3=document.getElementById('tb3');
-    await slideOut(tb2,400);
+    tbOut(tb2);
     await wait(250);
-    await slideIn(tb3,0,350);
+    await tbIn(tb3,0);
+    // stagger examples
+    await wait(200);
+    const ex1=document.getElementById('ex1');
+    const ex2=document.getElementById('ex2');
+    const ex3=document.getElementById('ex3');
+    ex1.classList.add('in');
+    await wait(400);
+    ex2.classList.add('in');
+    await wait(400);
+    ex3.classList.add('in');
+  },13000);
 
-    smPose('look-left');
-    sm.style.transition='transform 0.6s ease';
-    sm.style.transform='translateX(440px)';
-
-    // icons staggered
-    const icons=['icon-netflix','icon-spotify','icon-bank'];
-    for(let i=0;i<icons.length;i++){
-      await wait(300);
-      const ic=document.getElementById(icons[i]);
-      ic.style.transform='translateX(80px)';
-      ic.style.transition='opacity 0.4s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1)';
-      await wait(20);
-      ic.style.opacity='1';
-      ic.style.transform='translateX(0)';
-      iconFloat(icons[i]);
-    }
-  },12000);
-
-  // ── T=18: parecen pequeños ──
+  // ── T=18 ──
   T(async()=>{
     const tb3=document.getElementById('tb3');
     const tb4=document.getElementById('tb4');
-    const icons=['icon-netflix','icon-spotify','icon-bank'];
-    icons.forEach(id=>{
-      const ic=document.getElementById(id);
-      ic.style.transition='opacity 0.4s ease, transform 0.4s ease';
-      ic.style.opacity='0';ic.style.transform='translateX(-80px)';
+    tbOut(tb3);
+    ['ex1','ex2','ex3'].forEach(id=>{
+      const el=document.getElementById(id);
+      el.classList.remove('in');
+      el.style.opacity='0';
+      el.style.transform='translateX(-60px)';
+      el.style.transition='opacity 0.35s ease, transform 0.35s ease';
     });
-    await slideOut(tb3,400);
+    showIllus('il3');
     await wait(250);
-    await slideIn(tb4,0,400);
-    smPose('idle');
-    sm.style.transition='transform 0.6s ease';
-    sm.style.transform='translateX(540px)';
-    showGsAmounts();
+    await tbIn(tb4,0);
+    spawnGs();
   },18000);
 
-  // ── T=21: pero al final ──
+  // ── T=21 ──
   T(async()=>{
     const tb4=document.getElementById('tb4');
     const tb5=document.getElementById('tb5');
-    await slideOut(tb4,400);
+    tbOut(tb4);
     await wait(250);
-    await slideIn(tb5,0,400);
+    await tbIn(tb5,0);
   },21000);
 
-  // ── T=23: MILLONES ──
+  // ── T=23 ──
   T(async()=>{
     const tb5=document.getElementById('tb5');
-    await slideOut(tb5,300);
-    convergeGs(async()=>{
-      const ml=document.getElementById('millones');
-      ml.style.transition='opacity 0.35s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1)';
-      ml.style.opacity='1';
-      ml.style.transform='translate(-50%,-50%) scale(1)';
-      smPose('shock');
-      // underline
-      await wait(350);
-      const ul=document.getElementById('millones-underline');
-      ul.style.transition='width 0.4s ease';
-      ul.style.width='600px';
+    tbOut(tb5);
+    collapseGs(async()=>{
+      await showMillones();
     });
   },23000);
 
-  // ── T=27: pasa porque ──
+  // ── T=27 ──
   T(async()=>{
-    const ml=document.getElementById('millones');
-    const ul=document.getElementById('millones-underline');
-    ml.style.transition='opacity 0.4s ease, transform 0.4s ease';
-    ml.style.opacity='0';ml.style.transform='translate(-50%,-50%) scale(0.96)';
-    ul.style.transition='opacity 0.4s ease';ul.style.opacity='0';
-
     const tb6=document.getElementById('tb6');
+    hideMillones();
+    showIllus('il4');
+    await wait(450);
+    await tbIn(tb6,0);
+    // punch entrance for second line
     const tb6b=document.getElementById('tb6b');
-    await wait(400);
-    await slideIn(tb6,0,400);
-
-    // punch entrance for "no los registrás"
-    tb6b.style.opacity='0';
-    tb6b.style.transform='scale(1.3)';
-    await wait(200);
-    tb6b.style.transition='opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)';
+    await wait(300);
+    forceReflow(tb6b);
+    tb6b.style.transition='opacity 0.3s cubic-bezier(0.16,1,0.3,1), transform 0.3s cubic-bezier(0.34,1.56,0.64,1)';
     tb6b.style.opacity='1';
     tb6b.style.transform='scale(1)';
-
-    // stickman to left, notebook + pencil
-    smPose('write');
-    sm.style.transition='transform 0.8s ease';
-    sm.style.transform='translateX(160px)';
-    const nb=document.getElementById('notebook');
-    nb.style.transition='opacity 0.4s ease';
-    nb.style.opacity='1';
-    const pc=document.getElementById('pencil');
-    pc.style.transition='opacity 0.4s ease';
-    pc.style.opacity='1';
-    pc.style.animationPlayState='running';
   },27000);
 
-  // ── T=30: CTA copy ──
+  // ── T=30 ──
   T(async()=>{
     const tb6=document.getElementById('tb6');
     const tb7=document.getElementById('tb7');
-    const nb=document.getElementById('notebook');
-    const pc=document.getElementById('pencil');
-    nb.style.transition='opacity 0.3s ease';nb.style.opacity='0';
-    pc.style.transition='opacity 0.3s ease';pc.style.opacity='0';
-    pc.style.animationPlayState='paused';
-    await slideOut(tb6,400);
+    tbOut(tb6);
+    showIllus('il5');
     await wait(250);
-    await slideIn(tb7,0,400);
-    smPose('idle');
+    await tbIn(tb7,0);
   },30000);
 
-  // ── T=33: CTA button ──
-  T(async()=>{
-    smPose('thumbs-up');
-    sm.style.transition='transform 0.7s cubic-bezier(0.16,1,0.3,1)';
-    sm.style.transform='translateX(820px)';
-    const btn=document.getElementById('cta-btn');
-    btn.style.transition='opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1)';
-    btn.style.opacity='1';
-    btn.style.transform='translateX(-50%) translateY(0)';
-    await wait(600);
-    btn.style.animation='ctaPulse 2s ease-in-out infinite';
+  // ── T=33 ──
+  T(()=>{
+    const cta=document.getElementById('cta-btn');
+    cta.style.transition='opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1)';
+    cta.style.opacity='1';
+    cta.style.transform='translateX(-50%) translateY(0)';
+    cta.classList.add('visible');
   },33000);
 
-  // ── T=34.5: brand close ──
-  T(async()=>{
-    await fadeIn(document.getElementById('brand-close'),0,500);
+  // ── T=34.5 ──
+  T(()=>{
+    document.getElementById('brand-close').classList.add('visible');
   },34500);
 
-  // ── T=35: loop ──
-  T(()=>{
-    const fo=document.getElementById('fade-overlay');
-    fo.style.transition='opacity 0.6s ease';
+  // ── T=35: LOOP ──
+  T(async()=>{
     fo.style.opacity='1';
-    setTimeout(startReel,700);
+    await wait(700);
+    startReel();
   },35000);
 }
 
-// start breathing
-breathe();
-// autoplay
-window.addEventListener('load',()=>setTimeout(startReel,300));
+window.addEventListener('load',()=>setTimeout(startReel,200));
 </script>
 </body>
 </html>
