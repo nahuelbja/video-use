@@ -207,12 +207,13 @@ export default function Hero() {
           Cada rostro es una obra única. Mi trabajo es revelarla.
         </motion.p>
 
-        {/* CTA */}
+        {/* CTAs */}
         <motion.div
           initial="hidden"
           animate="visible"
           custom={0.55}
           variants={fadeUp}
+          style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}
         >
           <a
             href="#presupuesto"
@@ -244,6 +245,41 @@ export default function Hero() {
             }}
           >
             Calcular Presupuesto
+          </a>
+          <a
+            data-cal-link="romyramos.makeup"
+            data-cal-config='{"layout":"month_view"}'
+            href="#"
+            onClick={(e) => e.preventDefault()}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'transparent',
+              color: 'var(--noir)',
+              border: '1px solid var(--noir)',
+              padding: '18px 48px',
+              fontFamily: 'var(--font-inter)',
+              fontSize: '11px',
+              fontWeight: 500,
+              textTransform: 'uppercase',
+              letterSpacing: '0.3em',
+              textDecoration: 'none',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget;
+              el.style.background = 'var(--noir)';
+              el.style.color = 'var(--blanc)';
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget;
+              el.style.background = 'transparent';
+              el.style.color = 'var(--noir)';
+            }}
+          >
+            Reservar Turno
           </a>
         </motion.div>
 
