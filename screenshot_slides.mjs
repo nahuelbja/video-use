@@ -3,7 +3,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const htmlFile = path.join(__dirname, 'carrusel_separar_plata.html');
+const target = process.argv[2] || 'carrusel_separar_plata.html';
+const htmlFile = path.join(__dirname, target);
+const prefix = process.argv[3] || 'slide';
 const outDir = __dirname;
 
 const browser = await puppeteer.launch({
@@ -23,7 +25,7 @@ console.log(`Found ${slides.length} slides`);
 
 for (let i = 0; i < slides.length; i++) {
   const slide = slides[i];
-  const outPath = path.join(outDir, `slide_${String(i + 1).padStart(2, '0')}.png`);
+  const outPath = path.join(outDir, `${prefix}_${String(i + 1).padStart(2, '0')}.png`);
   await slide.screenshot({
     path: outPath,
     type: 'png',
