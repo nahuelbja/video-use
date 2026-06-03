@@ -273,11 +273,18 @@
       display: flex;
       gap: 24px;
       margin-top: 8px;
+      justify-content: center;
+      align-items: stretch;
     }
     #s6 .cmp-box {
-      flex: 1;
+      width: 400px;
+      max-width: 400px;
       padding: 30px;
       border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      box-sizing: border-box;
     }
     #s6 .cmp-box.left  { border: 2px solid var(--amber); }
     #s6 .cmp-box.right { border: 2px solid var(--green); }
