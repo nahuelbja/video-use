@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historia — Día del Contador · naberol.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0;
+      width: 100vw; height: 100vh;
+      background: #000000;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-family: 'Geist', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    #hint {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Geist Mono', monospace;
+      font-size: 14px;
+      color: rgba(255,255,255,0.4);
+      white-space: nowrap;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    #stage {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: #061A3A;
+      flex-shrink: 0;
+    }
+
+    /* LAYER 1 — Background image */
+    #bg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 1080px;
+      height: 1920px;
+      object-fit: cover;
+      object-position: center;
+      z-index: 1;
+    }
+
+    /* LAYER 2 — Dark overlay */
+    #overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 1080px;
+      height: 1920px;
+      background: linear-gradient(
+        to bottom,
+        rgba(6,26,58,0.40) 0%,
+        rgba(6,26,58,0.55) 50%,
+        rgba(6,26,58,0.75) 100%
+      );
+      z-index: 2;
+    }
+
+    /* LAYER 3 — All text content */
+    #content {
+      position: absolute;
+      top: 0; left: 0;
+      width: 1080px;
+      height: 1920px;
+      z-index: 3;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* DATE — top left */
+    #date-block {
+      position: absolute;
+      top: 80px;
+      left: 70px;
+    }
+
+    #date-day {
+      font-family: 'Geist', sans-serif;
+      font-weight: 700;
+      font-size: 130px;
+      line-height: 0.9;
+      color: #FFFFFF;
+      margin: 0;
+      display: block;
+    }
+
+    #date-month {
+      font-family: 'Geist', sans-serif;
+      font-weight: 400;
+      font-size: 38px;
+      color: #4F99FF;
+      margin: 4px 0 0 0;
+      display: block;
+    }
+
+    /* MAIN COPY — centered vertically */
+    #main-copy {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-54%);
+      left: 70px;
+      right: 70px;
+    }
+
+    .line-feliz {
+      font-family: 'Geist', sans-serif;
+      font-weight: 700;
+      font-size: 88px;
+      line-height: 1.0;
+      color: #FFFFFF;
+      margin: 0;
+      display: block;
+    }
+
+    .line-quienes {
+      font-family: 'Geist', sans-serif;
+      font-weight: 400;
+      font-size: 62px;
+      line-height: 1.1;
+      color: rgba(255,255,255,0.75);
+      margin: 8px 0 0 0;
+      display: block;
+    }
+
+    .line-traducimos {
+      font-family: 'Geist', sans-serif;
+      font-weight: 700;
+      font-size: 130px;
+      line-height: 0.95;
+      color: #00B37A;
+      margin: 12px 0 0 0;
+      display: inline-block;
+      border-bottom: 4px solid #00B37A;
+      padding-bottom: 2px;
+    }
+
+    .line-numeros {
+      font-family: 'Geist', sans-serif;
+      font-weight: 400;
+      font-size: 68px;
+      line-height: 1.1;
+      color: #FFFFFF;
+      margin: 18px 0 0 0;
+      display: block;
+    }
+
+    .line-decisiones {
+      font-family: 'Geist', sans-serif;
+      font-weight: 700;
+      font-size: 88px;
+      line-height: 1.0;
+      color: #FFFFFF;
+      margin: 4px 0 0 0;
+      display: block;
+    }
+
+    .line-sub {
+      font-family: 'Geist', sans-serif;
+      font-weight: 600;
+      font-size: 40px;
+      line-height: 1.2;
+      color: rgba(255,255,255,0.9);
+      margin: 60px 0 0 0;
+      display: block;
+    }
+
+    /* BOTTOM — logo + handle */
+    #bottom {
+      position: absolute;
+      bottom: 90px;
+      left: 0;
+      width: 1080px;
+      text-align: center;
+    }
+
+    #brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+
+    #brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #1E7AF5;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    #brand-name {
+      font-family: 'Geist', sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      color: #FFFFFF;
+      line-height: 1;
+    }
+
+    #brand-handle {
+      font-family: 'Geist Mono', monospace;
+      font-weight: 500;
+      font-size: 18px;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.06em;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="hint">Tip: usá Cmd+Shift+4 para capturar la historia</div>
+
+  <div id="stage">
+
+    <!-- LAYER 1: Background -->
+    <img id="bg" src="fondo.jpg" alt="">
+
+    <!-- LAYER 2: Overlay -->
+    <div id="overlay"></div>
+
+    <!-- LAYER 3: Content -->
+    <div id="content">
+
+      <!-- Date block -->
+      <div id="date-block">
+        <span id="date-day">09</span>
+        <span id="date-month">de junio</span>
+      </div>
+
+      <!-- Main copy -->
+      <div id="main-copy">
+        <span class="line-feliz">Feliz día</span>
+        <span class="line-quienes">a quienes</span>
+        <span class="line-traducimos">TRADUCIMOS</span>
+        <span class="line-numeros">números</span>
+        <span class="line-decisiones">en decisiones.</span>
+        <span class="line-sub">Feliz día, contadores. 🙌</span>
+      </div>
+
+      <!-- Bottom brand -->
+      <div id="bottom">
+        <div id="brand-row">
+          <div id="brand-dot"></div>
+          <span id="brand-name">naberol.</span>
+        </div>
+        <div id="brand-handle">@naberolconta</div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function scaleStage() {
+      const s = document.getElementById('stage');
+      const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+      s.style.transform = 'scale(' + scale + ')';
+      s.style.transformOrigin = 'center center';
+    }
+    window.addEventListener('resize', scaleStage);
+    window.addEventListener('load', scaleStage);
+    scaleStage();
+  </script>
+
+</body>
+</html>
