@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carrusel — DNIT Clausura · naberol.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 40px 0;
+    width: 100%;
+    background: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    font-family: 'Geist', 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #hint {
+    color: rgba(255,255,255,0.6);
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px;
+  }
+
+  .slide {
+    width: 1080px;
+    height: 1350px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 80px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+
+  .bg-ink   { background: #061A3A; }
+  .bg-navy  { background: linear-gradient(to bottom, #0A4BA6 0%, #061A3A 100%); }
+  .bg-blue  { background: #1E7AF5; }
+
+  /* Logo */
+  .logo {
+    position: absolute;
+    top: 80px; left: 80px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #1E7AF5;
+    flex-shrink: 0;
+  }
+  .logo.white .dot { background: #FFFFFF; }
+  .logo span {
+    font-weight: 700;
+    font-size: 22px;
+    color: #FFFFFF;
+  }
+
+  /* Top right label */
+  .topright {
+    position: absolute;
+    top: 80px; right: 80px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+  }
+
+  /* Page number */
+  .pagenum {
+    position: absolute;
+    bottom: 80px; right: 80px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 16px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .center-content {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  /* Common typography helpers */
+  .mono-label {
+    font-family: 'Geist Mono', monospace;
+    letter-spacing: 0.08em;
+  }
+
+  .sp-30 { height: 30px; }
+  .sp-40 { height: 40px; }
+  .sp-50 { height: 50px; }
+  .sp-60 { height: 60px; }
+
+  p { margin: 0; }
+
+  /* ============ SLIDE 1 ============ */
+  #s1 .alert-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  #s1 .alert-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #EF4444;
+    box-shadow: 0 0 0 6px rgba(239,68,68,0.18);
+    flex-shrink: 0;
+  }
+  #s1 .alert-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 18px;
+    letter-spacing: 0.08em;
+    color: #EF4444;
+  }
+  #s1 .title-1 { font-weight: 700; font-size: 96px; color: #FFFFFF; line-height: 1.05; margin: 0; }
+  #s1 .title-2 { font-weight: 700; font-size: 100px; color: #F59E0B; line-height: 1.05; margin: 0; }
+  #s1 .question { font-weight: 600; font-size: 64px; color: #FFFFFF; line-height: 1.1; }
+  #s1 .body { font-weight: 400; font-size: 34px; color: rgba(255,255,255,0.8); line-height: 1.45; }
+  #s1 .punchline { font-weight: 600; font-size: 38px; color: #FFFFFF; line-height: 1.3; }
+  #s1 .cta {
+    position: absolute;
+    bottom: 90px; left: 80px;
+    font-weight: 600;
+    font-size: 24px;
+    color: #1E7AF5;
+  }
+
+  /* ============ SLIDE 2 ============ */
+  #s2 .title-1 { font-weight: 700; font-size: 72px; color: #FFFFFF; line-height: 1.1; margin: 0; }
+  #s2 .title-2 { font-weight: 700; font-size: 76px; color: #00B37A; line-height: 1.1; margin: 0; }
+  #s2 .body { font-weight: 400; font-size: 38px; color: rgba(255,255,255,0.9); line-height: 1.4; }
+  #s2 .doc-list { display: flex; flex-direction: column; gap: 30px; }
+  #s2 .doc-item { display: flex; align-items: center; gap: 22px; }
+  #s2 .doc-item span { font-weight: 600; font-size: 36px; color: #FFFFFF; }
+  #s2 .highlight { font-weight: 700; font-size: 40px; color: #F59E0B; line-height: 1.3; }
+  #s2 .legalref {
+    font-family: 'Geist Mono', monospace;
+    font-size: 20px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* ============ SLIDE 3 ============ */
+  #s3 .title { font-weight: 700; font-size: 76px; color: #FFFFFF; line-height: 1.1; margin: 0; }
+  #s3 .item-list { display: flex; flex-direction: column; gap: 36px; }
+  #s3 .item { display: flex; align-items: flex-start; gap: 24px; }
+  #s3 .item-text { font-weight: 600; font-size: 40px; color: #FFFFFF; line-height: 1.3; }
+  #s3 .item-note { font-weight: 400; font-size: 26px; color: rgba(255,255,255,0.4); margin-top: 6px; }
+  #s3 .punch-box {
+    background: rgba(245,158,11,0.1);
+    border-left: 4px solid #F59E0B;
+    border-radius: 8px;
+    padding: 24px;
+  }
+  #s3 .punch-box p { font-weight: 600; font-size: 34px; color: #FFFFFF; line-height: 1.4; }
+  #s3 .punch-box .accent { color: #F59E0B; }
+
+  /* ============ SLIDE 4 ============ */
+  #s4 .title-1 { font-weight: 700; font-size: 64px; color: #FFFFFF; line-height: 1.1; margin: 0; }
+  #s4 .title-2 { font-weight: 700; font-size: 72px; color: #F59E0B; line-height: 1.1; margin: 0; }
+  #s4 .timeline { display: flex; flex-direction: column; }
+  #s4 .step { display: flex; align-items: flex-start; gap: 28px; position: relative; padding-bottom: 36px; }
+  #s4 .step:last-child { padding-bottom: 0; }
+  #s4 .step-circle {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 2px solid #EF4444;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 22px; color: #EF4444;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    background: transparent;
+  }
+  #s4 .step-line {
+    position: absolute;
+    top: 40px; left: 19px;
+    width: 2px;
+    height: calc(100% - 40px);
+    background: rgba(239,68,68,0.3);
+  }
+  #s4 .step-text { font-weight: 400; font-size: 34px; color: #FFFFFF; line-height: 1.4; padding-top: 4px; }
+  #s4 .consequence { font-weight: 700; font-size: 42px; color: #FFFFFF; line-height: 1.3; }
+  #s4 .punchline { font-weight: 700; font-size: 48px; color: #EF4444; line-height: 1.3; }
+
+  /* ============ SLIDE 5 ============ */
+  #s5 .title-1 { font-weight: 700; font-size: 68px; color: #FFFFFF; line-height: 1.1; margin: 0; }
+  #s5 .title-2 { font-weight: 700; font-size: 84px; color: #EF4444; line-height: 1.1; margin: 0; }
+  #s5 .num-list { display: flex; flex-direction: column; gap: 36px; }
+  #s5 .num-item { display: flex; align-items: flex-start; gap: 28px; }
+  #s5 .num-item .num { font-weight: 700; font-size: 56px; color: #F59E0B; line-height: 1; flex-shrink: 0; min-width: 70px; }
+  #s5 .num-item .text { font-weight: 600; font-size: 36px; color: #FFFFFF; line-height: 1.35; padding-top: 8px; }
+  #s5 .num-item .text .note { font-weight: 400; font-size: 26px; color: rgba(255,255,255,0.4); display: block; margin-top: 4px; }
+  #s5 .warning-row { display: flex; align-items: flex-start; gap: 18px; }
+  #s5 .warning-row p { font-weight: 400; font-size: 30px; color: rgba(255,255,255,0.75); font-style: italic; line-height: 1.4; }
+
+  /* ============ SLIDE 6 ============ */
+  #s6 .title { font-weight: 700; font-size: 80px; color: #FFFFFF; line-height: 1.1; margin: 0; }
+  #s6 .scenario { font-weight: 400; font-size: 38px; color: rgba(255,255,255,0.9); line-height: 1.4; }
+  #s6 .calc-box {
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  #s6 .calc-row { display: flex; justify-content: space-between; align-items: baseline; }
+  #s6 .calc-label { font-family: 'Geist Mono', monospace; font-size: 26px; color: rgba(255,255,255,0.5); }
+  #s6 .calc-value { font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 32px; color: #FFFFFF; }
+  #s6 .calc-value.amber { color: #F59E0B; }
+  #s6 .calc-divider { height: 1px; background: rgba(255,255,255,0.15); margin: 0; }
+  #s6 .calc-final { font-weight: 700; font-size: 30px; color: #EF4444; text-align: right; }
+  #s6 .punchline { font-weight: 700; font-size: 64px; color: #F59E0B; line-height: 1.2; }
+
+  /* ============ SLIDE 7 ============ */
+  #s7 .title-1 { font-weight: 700; font-size: 76px; color: #FFFFFF; line-height: 1.1; margin: 0; }
+  #s7 .title-2 { font-weight: 700; font-size: 100px; color: #00B37A; line-height: 1.1; margin: 0; }
+  #s7 .check-list { display: flex; flex-direction: column; gap: 36px; }
+  #s7 .check-item { display: flex; align-items: flex-start; gap: 24px; }
+  #s7 .check-item span { font-weight: 600; font-size: 34px; color: #FFFFFF; line-height: 1.4; }
+  #s7 .punchline { font-weight: 700; font-size: 52px; color: #FFFFFF; line-height: 1.3; }
+  #s7 .punchline .accent { color: #EF4444; }
+
+  /* ============ SLIDE 8 ============ */
+  #s8 .title { font-weight: 700; font-size: 84px; color: #FFFFFF; line-height: 1.1; margin: 0; }
+  #s8 .pin-list { display: flex; flex-direction: column; gap: 32px; }
+  #s8 .pin-item { display: flex; align-items: flex-start; gap: 20px; }
+  #s8 .pin-item .icon { font-size: 38px; line-height: 1; flex-shrink: 0; }
+  #s8 .pin-item span.txt { font-weight: 600; font-size: 38px; color: #FFFFFF; line-height: 1.35; }
+  #s8 .pin-item span.pill {
+    font-weight: 600; font-size: 38px; color: #061A3A;
+    background: #FFFFFF; border-radius: 8px; padding: 6px 16px;
+    line-height: 1.35; display: inline;
+  }
+  #s8 .cta-text { font-weight: 400; font-size: 40px; color: rgba(255,255,255,0.9); }
+  #s8 .cta-button {
+    background: #061A3A;
+    border: 2px solid #FFFFFF;
+    border-radius: 16px;
+    padding: 36px 56px;
+    width: fit-content;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  #s8 .cta-button .follow { font-weight: 700; font-size: 44px; color: #FFFFFF; }
+  #s8 .cta-button .handle { font-family: 'Geist Mono', monospace; font-size: 26px; color: rgba(255,255,255,0.8); letter-spacing: 0.04em; }
+  #s8 .below-cta { font-weight: 400; font-size: 26px; color: rgba(255,255,255,0.7); text-align: center; }
+  #s8 .footer {
+    position: absolute;
+    bottom: 80px; left: 0; width: 100%;
+    text-align: center;
+  }
+  #s8 .footer .brand { font-weight: 700; font-size: 32px; color: #FFFFFF; }
+  #s8 .footer .tagline { font-weight: 400; font-size: 20px; color: rgba(255,255,255,0.7); margin-top: 6px; }
+
+</style>
+</head>
+<body>
+<div id="hint">Tip: usá Cmd+Shift+4 para capturar cada slide</div>
+
+<!-- ════════════════════════════════════════ SLIDE 1 — PORTADA ════════════════════════════════════════ -->
+<div class="slide bg-ink" id="s1">
+  <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+  <div class="topright" style="color:#EF4444;">CASO REAL · DNIT</div>
+
+  <div class="center-content">
+    <div class="alert-row">
+      <div class="alert-dot"></div>
+      <span class="alert-label">ALERTA TRIBUTARIA</span>
+    </div>
+    <div class="sp-30"></div>
+    <p class="title-1">La DNIT cerró</p>
+    <p class="title-2">un RESTAURANT.</p>
+    <div class="sp-50"></div>
+    <p class="question">¿Sabés por qué?</p>
+    <div class="sp-50"></div>
+    <p class="body">Un local de Ciudad del Este fue suspendido por orden judicial. El motivo: no emitía comprobantes de venta.</p>
+    <div class="sp-40"></div>
+    <p class="punchline">Esto le puede pasar a cualquier negocio.</p>
+  </div>
+
+  <div class="cta">Seguí leyendo →</div>
+  <div class="pagenum">01/08</div>
+</div>
+
+<!-- ════════════════════════════════════════ SLIDE 2 — QUÉ ES UN COMPROBANTE ════════════════════════════════════════ -->
+<div class="slide bg-navy" id="s2">
+  <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+  <div class="topright" style="color:#4F99FF;">LO BÁSICO</div>
+
+  <div class="center-content">
+    <p class="title-1">¿Qué es un</p>
+    <p class="title-2">comprobante de venta?</p>
+    <div class="sp-50"></div>
+    <p class="body">Es el documento que respalda cada operación comercial.</p>
+    <div class="sp-40"></div>
+    <div class="doc-list">
+      <div class="doc-item">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#4F99FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="8" y="4" width="24" height="32" rx="2"/>
+          <line x1="13" y1="13" x2="27" y2="13"/>
+          <line x1="13" y1="20" x2="27" y2="20"/>
+          <line x1="13" y1="27" x2="22" y2="27"/>
+        </svg>
+        <span>Factura</span>
+      </div>
+      <div class="doc-item">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#4F99FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="8" y="4" width="24" height="32" rx="2"/>
+          <line x1="13" y1="13" x2="27" y2="13"/>
+          <line x1="13" y1="20" x2="27" y2="20"/>
+          <line x1="13" y1="27" x2="22" y2="27"/>
+        </svg>
+        <span>Ticket de máquina registradora</span>
+      </div>
+      <div class="doc-item">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#4F99FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="8" y="4" width="24" height="32" rx="2"/>
+          <line x1="13" y1="13" x2="27" y2="13"/>
+          <line x1="13" y1="20" x2="27" y2="20"/>
+          <line x1="13" y1="27" x2="22" y2="27"/>
+        </svg>
+        <span>Comprobante de pequeño contribuyente</span>
+      </div>
+    </div>
+    <div class="sp-40"></div>
+    <p class="highlight">Sin importar el monto: si vendés, lo emitís.</p>
+    <div class="sp-30"></div>
+    <p class="legalref">Ley 6380/19 y su reglamentación</p>
+  </div>
+
+  <div class="pagenum">02/08</div>
+</div>
+
+<!-- ════════════════════════════════════════ SLIDE 3 — QUIÉNES ESTÁN OBLIGADOS ════════════════════════════════════════ -->
+<div class="slide bg-ink" id="s3">
+  <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+  <div class="topright" style="color:#4F99FF;">OBLIGADOS</div>
+
+  <div class="center-content">
+    <p class="title">¿Quiénes deben</p>
+    <p class="title">emitir comprobantes?</p>
+    <div class="sp-60"></div>
+    <div class="item-list">
+      <div class="item">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#00B37A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:6px;">
+          <polyline points="5,17 12,24 27,8"/>
+        </svg>
+        <div>
+          <p class="item-text">Contribuyentes de IVA General <span class="item-note" style="display:inline; font-size:26px;">(régimen normal)</span></p>
+        </div>
+      </div>
+      <div class="item">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#00B37A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:6px;">
+          <polyline points="5,17 12,24 27,8"/>
+        </svg>
+        <div>
+          <p class="item-text">Pequeños Contribuyentes IVA</p>
+          <p class="item-note">(hasta G. 500 millones anuales)</p>
+        </div>
+      </div>
+      <div class="item">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#00B37A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:6px;">
+          <polyline points="5,17 12,24 27,8"/>
+        </svg>
+        <div>
+          <p class="item-text">Contribuyentes del IRE Simple</p>
+        </div>
+      </div>
+    </div>
+    <div class="sp-50"></div>
+    <div class="punch-box">
+      <p>No importa si sos un puesto chico o un restaurant grande. Si tenés RUC, emitís comprobante <span class="accent">SIEMPRE</span>.</p>
+    </div>
+  </div>
+
+  <div class="pagenum">03/08</div>
+</div>
+
+<!-- ════════════════════════════════════════ SLIDE 4 — QUÉ PASÓ ════════════════════════════════════════ -->
+<div class="slide bg-navy" id="s4">
+  <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+  <div class="topright" style="color:#EF4444;">EL CASO</div>
+
+  <div class="center-content">
+    <p class="title-1">¿Qué pasó exactamente</p>
+    <p class="title-2">en Ciudad del Este?</p>
+    <div class="sp-50"></div>
+    <div class="timeline">
+      <div class="step">
+        <div class="step-circle">1</div>
+        <div class="step-line"></div>
+        <p class="step-text">La DNIT detectó que el local no emitía comprobantes.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <div class="step-line"></div>
+        <p class="step-text">Actuó por orden del juzgado competente.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <p class="step-text">Suspendió temporalmente las actividades.</p>
+      </div>
+    </div>
+    <div class="sp-50"></div>
+    <p class="consequence">Puertas cerradas. Sin ingresos. Proceso legal en curso.</p>
+    <div class="sp-30"></div>
+    <p class="punchline">Todo por no dar una factura.</p>
+  </div>
+
+  <div class="pagenum">04/08</div>
+</div>
+
+<!-- ════════════════════════════════════════ SLIDE 5 — CONSECUENCIAS ════════════════════════════════════════ -->
+<div class="slide bg-ink" id="s5">
+  <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+  <div class="topright" style="color:#EF4444;">CONSECUENCIAS</div>
+
+  <div class="center-content">
+    <p class="title-1">¿Qué te puede pasar</p>
+    <p class="title-2">si NO emitís?</p>
+    <div class="sp-50"></div>
+    <div class="num-list">
+      <div class="num-item">
+        <span class="num">1</span>
+        <div class="text">Multa de hasta el 100% del impuesto omitido</div>
+      </div>
+      <div class="num-item">
+        <span class="num">2</span>
+        <div class="text">Clausura temporal del local<span class="note">(como este caso)</span></div>
+      </div>
+      <div class="num-item">
+        <span class="num">3</span>
+        <div class="text">Proceso ante el juzgado de la causa</div>
+      </div>
+      <div class="num-item">
+        <span class="num">4</span>
+        <div class="text">Antecedente tributario que complica créditos y licitaciones</div>
+      </div>
+    </div>
+    <div class="sp-40"></div>
+    <div class="warning-row">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:4px;">
+        <path d="M18 4 L34 32 L2 32 Z"/>
+        <line x1="18" y1="14" x2="18" y2="22"/>
+        <line x1="18" y1="26" x2="18" y2="26.5"/>
+      </svg>
+      <p>La DNIT puede actuar de oficio o por denuncia de un cliente.</p>
+    </div>
+  </div>
+
+  <div class="pagenum">05/08</div>
+</div>
+
+<!-- ════════════════════════════════════════ SLIDE 6 — EJEMPLO EN GUARANÍES ════════════════════════════════════════ -->
+<div class="slide bg-navy" id="s6">
+  <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+  <div class="topright" style="color:#4F99FF;">EJEMPLO REAL</div>
+
+  <div class="center-content">
+    <p class="title">Hagamos números.</p>
+    <div class="sp-40"></div>
+    <p class="scenario">Vendés G. 2.000.000 en un día y no emitís nada.</p>
+    <div class="sp-40"></div>
+    <div class="calc-box">
+      <div class="calc-row">
+        <span class="calc-label">IVA OMITIDO (10%)</span>
+        <span class="calc-value">G. 200.000</span>
+      </div>
+      <div class="calc-row">
+        <span class="calc-label">+ MULTAS</span>
+        <span class="calc-value amber">G. ???</span>
+      </div>
+      <div class="calc-row">
+        <span class="calc-label">+ INTERESES</span>
+        <span class="calc-value amber">G. ???</span>
+      </div>
+      <div class="calc-divider"></div>
+      <div class="calc-final">× CADA DÍA SIN FACTURAR</div>
+    </div>
+    <div class="sp-40"></div>
+    <p class="punchline">El número asusta.</p>
+  </div>
+
+  <div class="pagenum">06/08</div>
+</div>
+
+<!-- ════════════════════════════════════════ SLIDE 7 — CÓMO CUBRIRTE ════════════════════════════════════════ -->
+<div class="slide bg-ink" id="s7">
+  <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+  <div class="topright" style="color:#00B37A;">LA SOLUCIÓN</div>
+
+  <div class="center-content">
+    <p class="title-1">Cómo operar</p>
+    <p class="title-2">TRANQUILO.</p>
+    <div class="sp-50"></div>
+    <div class="check-list">
+      <div class="check-item">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#00B37A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:4px;">
+          <polyline points="5,17 12,24 27,8"/>
+        </svg>
+        <span>Emití comprobante en CADA venta, sin excepción</span>
+      </div>
+      <div class="check-item">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#00B37A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:4px;">
+          <polyline points="5,17 12,24 27,8"/>
+        </svg>
+        <span>Usá tu talonario habilitado por la DNIT</span>
+      </div>
+      <div class="check-item">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#00B37A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:4px;">
+          <polyline points="5,17 12,24 27,8"/>
+        </svg>
+        <span>Guardá los talonarios usados al menos 5 años</span>
+      </div>
+      <div class="check-item">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#00B37A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:4px;">
+          <polyline points="5,17 12,24 27,8"/>
+        </svg>
+        <span>Si tenés dudas de tu régimen, consultá con un contador ANTES de la fiscalización</span>
+      </div>
+    </div>
+    <div class="sp-50"></div>
+    <p class="punchline">Mejor prevenir que <span class="accent">cerrar</span>.</p>
+  </div>
+
+  <div class="pagenum">07/08</div>
+</div>
+
+<!-- ════════════════════════════════════════ SLIDE 8 — CIERRE + CTA ════════════════════════════════════════ -->
+<div class="slide bg-blue" id="s8">
+  <div class="logo white"><div class="dot"></div><span>naberol.</span></div>
+  <div class="topright" style="color:rgba(255,255,255,0.6);">RESUMEN · 08</div>
+
+  <div class="center-content">
+    <p class="title">Lo que tenés</p>
+    <p class="title">que recordar:</p>
+    <div class="sp-50"></div>
+    <div class="pin-list">
+      <div class="pin-item">
+        <span class="icon">📌</span>
+        <span class="txt">Emitir comprobante no es opcional. Es ley.</span>
+      </div>
+      <div class="pin-item">
+        <span class="icon">📌</span>
+        <span class="txt">No importa el tamaño de tu negocio ni el monto.</span>
+      </div>
+      <div class="pin-item">
+        <span class="icon">📌</span>
+        <span class="pill">Las consecuencias van de multas a cierre judicial.</span>
+      </div>
+    </div>
+    <div class="sp-60"></div>
+    <p class="cta-text">¿Querés operar sin sustos?</p>
+    <div class="sp-30"></div>
+    <div class="cta-button">
+      <span class="follow">SEGUIME</span>
+      <span class="handle">@naberolconta</span>
+    </div>
+    <div class="sp-30"></div>
+    <p class="below-cta">Contenido así, todas las semanas.</p>
+  </div>
+
+  <div class="footer">
+    <div class="brand">naberol.</div>
+    <div class="tagline">Claridad fiscal, con diseño.</div>
+  </div>
+  <div class="pagenum">08/08</div>
+</div>
+
+</body>
+</html>
