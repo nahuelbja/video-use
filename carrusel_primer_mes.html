@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Carrusel — Tu primer mes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    margin:0; padding:40px 0;
+    width:100%;
+    background:#1a1a1a;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:40px;
+    font-family:'Geist','Inter',sans-serif;
+  }
+  .tip{
+    font-family:'Geist Mono', monospace;
+    font-size:14px;
+    color:rgba(255,255,255,0.6);
+  }
+  .slide{
+    width:1080px; height:1350px;
+    position:relative;
+    overflow:hidden;
+    padding:64px 72px;
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    background:#061A3A;
+    color:#fff;
+  }
+  .slide.on-blue{ background:#1E7AF5; }
+
+  /* ── recurring frame ── */
+  .topbar{
+    display:flex; justify-content:space-between; align-items:center;
+    position:relative; z-index:2;
+    flex-shrink:0;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand .dot{ width:9px; height:9px; border-radius:50%; background:#1E7AF5; }
+  .on-blue .brand .dot{ background:#061A3A; }
+  .brand span{ font-weight:700; font-size:22px; color:#fff; }
+  .issue{
+    font-family:'Geist Mono', monospace;
+    font-size:14px; letter-spacing:0.14em;
+    color:rgba(255,255,255,0.35);
+  }
+  .on-blue .issue{ color:rgba(255,255,255,0.5); }
+  .rule{
+    height:1px; width:100%;
+    background:rgba(30,122,245,0.35);
+    margin-top:20px;
+    position:relative; z-index:2;
+    flex-shrink:0;
+  }
+  .on-blue .rule{ background:rgba(6,26,58,0.25); }
+  .edge-cap{
+    position:absolute; right:40px; top:50%;
+    transform:translateY(-50%);
+    writing-mode:vertical-rl;
+    font-family:'Geist Mono', monospace;
+    font-size:11px; letter-spacing:0.35em;
+    color:rgba(255,255,255,0.13);
+    z-index:1;
+  }
+  .on-blue .edge-cap{ color:rgba(6,26,58,0.18); }
+  .folio{
+    position:absolute; bottom:64px; left:72px;
+    font-family:'Geist Mono', monospace;
+    font-size:14px; letter-spacing:0.2em;
+    color:rgba(255,255,255,0.3);
+    z-index:2;
+  }
+  .on-blue .folio{ color:rgba(255,255,255,0.55); }
+  .ghost{
+    position:absolute;
+    font-weight:700;
+    color:rgba(255,255,255,0.045);
+    line-height:0.8;
+    z-index:0;
+    white-space:nowrap;
+    pointer-events:none;
+  }
+  .on-blue .ghost{ color:rgba(6,26,58,0.13); }
+
+  .body-area{
+    flex:1; min-height:0;
+    position:relative; z-index:2;
+    display:flex; flex-direction:column;
+  }
+
+  .eyebrow{
+    font-family:'Geist Mono', monospace;
+    font-size:16px; letter-spacing:0.14em;
+    margin-bottom:26px;
+  }
+  .display-reg{ font-weight:400; color:rgba(255,255,255,0.75); }
+  .display-bold{ font-weight:700; color:#fff; letter-spacing:-0.02em; }
+  .body-p{
+    font-weight:400; font-size:30px;
+    color:rgba(255,255,255,0.8);
+    line-height:1.5; max-width:820px;
+  }
+  .pull{
+    font-weight:600; font-size:32px; color:#fff;
+    padding-left:24px;
+    border-left:3px solid #4F99FF;
+    line-height:1.3;
+  }
+
+  /* rows (checklists) */
+  .rows{ display:flex; flex-direction:column; }
+  .row{
+    display:flex; align-items:center; gap:20px;
+    padding:20px 0;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .row:first-child{ border-top:1px solid rgba(255,255,255,0.08); }
+  .row .mk{
+    font-family:'Geist Mono', monospace;
+    font-size:22px; flex-shrink:0; width:26px;
+  }
+  .row .rt{ font-weight:600; font-size:34px; color:#fff; }
+
+  /* ══ SLIDE 1 ══ */
+  #p1 .body-area{ justify-content:flex-end; padding-bottom:30px; }
+  #p1 .eyebrow{ color:#4F99FF; }
+  #p1 .l1{ font-weight:400; font-size:56px; color:rgba(255,255,255,0.75); }
+  #p1 .l2{ font-weight:700; font-size:128px; color:#fff; line-height:0.95; letter-spacing:-0.02em; }
+  #p1 .subline{ font-weight:600; font-size:40px; color:#fff; margin-top:40px; max-width:840px; }
+  #p1 .swipe{
+    position:absolute; right:72px; bottom:64px;
+    font-family:'Geist Mono', monospace;
+    font-size:20px; color:#4F99FF; z-index:2;
+  }
+
+  /* ══ SLIDES 2-6 common ══ */
+  .situ .body-area{ justify-content:center; padding-bottom:44px; }
+  .situ .headline{ margin-bottom:44px; }
+  .situ .hl-reg{ display:block; font-weight:400; color:rgba(255,255,255,0.75); }
+  .situ .hl-bold{ display:block; font-weight:700; color:#fff; letter-spacing:-0.02em; line-height:0.98; }
+  .situ .body-p{ margin-bottom:auto; }
+  .situ .pull{ margin-top:44px; }
+
+  /* slide 2 */
+  #p2 .eyebrow{ color:#4F99FF; }
+  #p2 .hl-reg{ font-size:56px; }
+  #p2 .hl-bold{ font-size:116px; }
+  #p2 .pull{ border-left-color:#4F99FF; }
+
+  /* slide 3 */
+  #p3 .eyebrow{ color:#4F99FF; }
+  #p3 .hl-reg{ font-size:52px; }
+  #p3 .hl-bold{ font-size:100px; }
+  #p3 .rows{ margin:10px 0 auto; }
+  #p3 .row .mk{ color:#4F99FF; }
+  #p3 .pull{ border-left-color:#4F99FF; }
+
+  /* slide 4 */
+  #p4 .eyebrow{ color:#F59E0B; }
+  #p4 .hl-reg{ font-size:52px; }
+  #p4 .hl-bold{ font-size:150px; color:#F59E0B; }
+  #p4 .pull{ border-left-color:#F59E0B; }
+
+  /* slide 5 */
+  #p5 .eyebrow{ color:#4F99FF; }
+  #p5 .hl-reg{ font-size:52px; }
+  #p5 .hl-bold{ font-size:120px; }
+  #p5 .rows{ margin:10px 0 auto; }
+  #p5 .row .mk{ color:#4F99FF; }
+  #p5 .pull{ border-left-color:#4F99FF; }
+
+  /* slide 6 */
+  #p6 .eyebrow{ color:#00B37A; }
+  #p6 .hl-reg{ font-size:52px; }
+  #p6 .hl-bold{ font-size:190px; color:#00B37A; line-height:0.9; }
+  #p6 .rows{ margin:10px 0 auto; }
+  #p6 .row .mk{ color:#00B37A; }
+  #p6 .pull{ border-left-color:#00B37A; }
+
+  /* ══ SLIDE 7 ══ */
+  #p7 .body-area{ justify-content:flex-start; padding-top:70px; }
+  #p7 .l1{ font-weight:400; font-size:52px; color:rgba(255,255,255,0.9); }
+  #p7 .l2{ font-weight:700; font-size:84px; color:#fff; line-height:1.02; letter-spacing:-0.02em; }
+  #p7 .l3{ font-weight:700; font-size:84px; color:#061A3A; line-height:1.02; letter-spacing:-0.02em; }
+  #p7 .question{ font-weight:600; font-size:40px; color:#fff; margin-top:60px; }
+  #p7 .escribime{ font-weight:700; font-size:76px; color:#fff; margin-top:32px; letter-spacing:-0.02em; }
+  #p7 .handle{
+    font-family:'Geist Mono', monospace;
+    font-size:26px; letter-spacing:0.06em;
+    color:rgba(255,255,255,0.8);
+    margin-top:8px;
+  }
+  #p7 .brand-close{
+    position:absolute; left:72px; bottom:104px;
+    z-index:2;
+  }
+  #p7 .brand-close .b1{ font-weight:700; font-size:24px; color:#fff; }
+  #p7 .brand-close .b2{ font-weight:400; font-size:16px; color:rgba(255,255,255,0.7); margin-top:4px; }
+</style>
+</head>
+<body>
+
+<div class="tip">Tip: capturá cada slide a 1080×1350</div>
+
+<!-- ══════ SLIDE 1 — PORTADA ══════ -->
+<div class="slide" id="p1">
+  <div class="ghost" style="top:-40px; right:-60px; font-size:200px; transform:rotate(-4deg);">PASO 1</div>
+  <div class="topbar">
+    <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+    <div class="issue">TU PRIMER MES · 2026</div>
+  </div>
+  <div class="rule"></div>
+  <div class="edge-cap">NABEROL CONTABLE — CÓMO TRABAJAMOS JUNTOS</div>
+
+  <div class="body-area">
+    <div class="eyebrow">SIN MISTERIOS</div>
+    <div class="l1">Tu primer mes</div>
+    <div class="l2">CONMIGO</div>
+    <div class="subline">Qué pasa exactamente cuando me escribís.</div>
+  </div>
+
+  <div class="swipe">Deslizá →</div>
+  <div class="folio">01 / 07</div>
+</div>
+
+<!-- ══════ SLIDE 2 — LA PRIMERA CHARLA ══════ -->
+<div class="slide situ" id="p2">
+  <div class="ghost" style="top:44%; left:-70px; font-size:200px;">HOLA</div>
+  <div class="topbar">
+    <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+    <div class="issue">TU PRIMER MES · 2026</div>
+  </div>
+  <div class="rule"></div>
+  <div class="edge-cap">NABEROL CONTABLE — CÓMO TRABAJAMOS JUNTOS</div>
+
+  <div class="body-area">
+    <div class="eyebrow">ANTES DE EMPEZAR · LA CHARLA</div>
+    <div class="headline">
+      <span class="hl-reg">Primero</span>
+      <span class="hl-bold">HABLAMOS.</span>
+    </div>
+    <div class="body-p">Me contás en qué estás: qué vendés, hace cuánto, si tenés RUC, si estás al día. Yo te digo qué necesitás — y qué no necesitás todavía.</div>
+    <div class="pull">Sin tecnicismos y sin compromiso.</div>
+  </div>
+
+  <div class="folio">02 / 07</div>
+</div>
+
+<!-- ══════ SLIDE 3 — SEMANA 1 · DIAGNÓSTICO ══════ -->
+<div class="slide situ" id="p3">
+  <div class="ghost" style="bottom:-70px; right:-40px; font-size:300px;">01</div>
+  <div class="topbar">
+    <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+    <div class="issue">TU PRIMER MES · 2026</div>
+  </div>
+  <div class="rule"></div>
+  <div class="edge-cap">NABEROL CONTABLE — CÓMO TRABAJAMOS JUNTOS</div>
+
+  <div class="body-area">
+    <div class="eyebrow">SEMANA 01 · DIAGNÓSTICO</div>
+    <div class="headline">
+      <span class="hl-reg">Reviso dónde</span>
+      <span class="hl-bold">ESTÁS PARADO.</span>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="mk">→</span><span class="rt">Estado real de tu RUC</span></div>
+      <div class="row"><span class="mk">→</span><span class="rt">Obligaciones vigentes</span></div>
+      <div class="row"><span class="mk">→</span><span class="rt">Declaraciones pendientes</span></div>
+      <div class="row"><span class="mk">→</span><span class="rt">Timbrado y régimen</span></div>
+    </div>
+    <div class="pull">Nada de suposiciones. Datos.</div>
+  </div>
+
+  <div class="folio">03 / 07</div>
+</div>
+
+<!-- ══════ SLIDE 4 — SEMANA 2 · REGULARIZACIÓN ══════ -->
+<div class="slide situ" id="p4">
+  <div class="ghost" style="top:42%; right:-60px; font-size:200px;">AL DÍA</div>
+  <div class="topbar">
+    <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+    <div class="issue">TU PRIMER MES · 2026</div>
+  </div>
+  <div class="rule"></div>
+  <div class="edge-cap">NABEROL CONTABLE — CÓMO TRABAJAMOS JUNTOS</div>
+
+  <div class="body-area">
+    <div class="eyebrow">SEMANA 02 · REGULARIZACIÓN</div>
+    <div class="headline">
+      <span class="hl-reg">Salimos del</span>
+      <span class="hl-bold">ROJO.</span>
+    </div>
+    <div class="body-p">Presentamos lo atrasado, corregimos lo que quedó mal cargado y ordenamos tu situación con la DNIT.</div>
+    <div class="pull">Se hace una vez. Después no vuelve a pasar.</div>
+  </div>
+
+  <div class="folio">04 / 07</div>
+</div>
+
+<!-- ══════ SLIDE 5 — SEMANA 3 · ORDEN ══════ -->
+<div class="slide situ" id="p5">
+  <div class="ghost" style="bottom:-40px; left:-50px; font-size:200px;">ORDEN</div>
+  <div class="topbar">
+    <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+    <div class="issue">TU PRIMER MES · 2026</div>
+  </div>
+  <div class="rule"></div>
+  <div class="edge-cap">NABEROL CONTABLE — CÓMO TRABAJAMOS JUNTOS</div>
+
+  <div class="body-area">
+    <div class="eyebrow">SEMANA 03 · EL SISTEMA</div>
+    <div class="headline">
+      <span class="hl-reg">Armamos tu</span>
+      <span class="hl-bold">RUTINA.</span>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="mk">·</span><span class="rt">Dónde me mandás tus comprobantes</span></div>
+      <div class="row"><span class="mk">·</span><span class="rt">Cada cuánto lo hacemos</span></div>
+      <div class="row"><span class="mk">·</span><span class="rt">Tu calendario de vencimientos</span></div>
+    </div>
+    <div class="pull">Diez minutos tuyos al mes. Nada más.</div>
+  </div>
+
+  <div class="folio">05 / 07</div>
+</div>
+
+<!-- ══════ SLIDE 6 — SEMANA 4 · TU PRIMER REPORTE ══════ -->
+<div class="slide situ" id="p6">
+  <div class="ghost" style="top:40%; right:-50px; font-size:200px;">CLARO</div>
+  <div class="topbar">
+    <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+    <div class="issue">TU PRIMER MES · 2026</div>
+  </div>
+  <div class="rule"></div>
+  <div class="edge-cap">NABEROL CONTABLE — CÓMO TRABAJAMOS JUNTOS</div>
+
+  <div class="body-area">
+    <div class="eyebrow">SEMANA 04 · TUS NÚMEROS</div>
+    <div class="headline">
+      <span class="hl-reg">Y por fin,</span>
+      <span class="hl-bold">VES.</span>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="mk">✓</span><span class="rt">Cuánto facturaste</span></div>
+      <div class="row"><span class="mk">✓</span><span class="rt">Cuánto te quedó de verdad</span></div>
+      <div class="row"><span class="mk">✓</span><span class="rt">Qué se viene el mes que entra</span></div>
+    </div>
+    <div class="pull">En un reporte que se entiende sin ser contador.</div>
+  </div>
+
+  <div class="folio">06 / 07</div>
+</div>
+
+<!-- ══════ SLIDE 7 — CIERRE + CTA ══════ -->
+<div class="slide on-blue" id="p7">
+  <div class="ghost" style="bottom:-80px; right:-40px; font-size:260px;">LISTO.</div>
+  <div class="topbar">
+    <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+    <div class="issue">TU PRIMER MES · 2026</div>
+  </div>
+  <div class="rule"></div>
+  <div class="edge-cap">NABEROL CONTABLE — CÓMO TRABAJAMOS JUNTOS</div>
+
+  <div class="body-area">
+    <div class="l1">Después de eso,</div>
+    <div class="l2">ya no pensás</div>
+    <div class="l3">MÁS EN ESTO.</div>
+    <div class="question">¿Arrancamos este mes?</div>
+    <div class="escribime">Escribime.</div>
+    <div class="handle">@naberolconta</div>
+  </div>
+
+  <div class="brand-close">
+    <div class="b1">naberol.</div>
+    <div class="b2">Claridad fiscal, con diseño.</div>
+  </div>
+  <div class="folio">07 / 07</div>
+</div>
+
+</body>
+</html>
