@@ -16,8 +16,22 @@ const browser = await puppeteer.launch({
 const page = await browser.newPage();
 await page.goto(`file://${htmlFile}`, { waitUntil: 'networkidle0' });
 
-// Wait for Google Fonts to load
-await page.evaluate(() => document.fonts.ready);
+// Wait for Google Fonts to load — explicitly load every @font-face used,
+// then settle briefly (document.fonts.ready alone can resolve before
+// large/rare faces like Archivo Black have actually painted).
+await page.evaluate(async () => {
+  const families = [
+    '400 170px "Archivo Black"',
+    'italic 400 64px "Playfair Display"',
+    'italic 700 52px "Playfair Display"',
+    '400 32px "Geist"',
+    '600 34px "Geist"',
+    '500 15px "Geist Mono"',
+  ];
+  try { await Promise.all(families.map((f) => document.fonts.load(f))); } catch (e) {}
+  await document.fonts.ready;
+});
+await new Promise((r) => setTimeout(r, 400));
 
 const slides = await page.$$('.slide');
 
