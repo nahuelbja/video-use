@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carrusel — Pequeño Contribuyente · naberol.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink:    #061A3A;
+      --navy:   #0A4BA6;
+      --blue:   #1E7AF5;
+      --bluel:  #4F99FF;
+      --white:  #FFFFFF;
+      --green:  #00B37A;
+      --amber:  #F59E0B;
+      --muted:  rgba(255,255,255,0.7);
+      --subtle: rgba(255,255,255,0.4);
+    }
+
+    html, body {
+      margin: 0; padding: 40px 0;
+      width: 100%;
+      background: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* tip bar */
+    .tip {
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.04em;
+      background: rgba(255,255,255,0.07);
+      padding: 10px 24px;
+      border-radius: 8px;
+    }
+
+    /* slide shell */
+    .slide {
+      width: 1080px;
+      height: 1350px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 80px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+
+    /* logo */
+    .logo {
+      position: absolute;
+      top: 80px; left: 80px;
+      display: flex; align-items: center; gap: 9px;
+      z-index: 10;
+    }
+    .logo-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+    }
+    .logo-text {
+      font-weight: 700; font-size: 22px;
+      color: var(--white); line-height: 1;
+    }
+
+    /* top-right tag */
+    .tag {
+      position: absolute;
+      top: 80px; right: 80px;
+      font-family: 'Courier New', monospace;
+      font-weight: 500;
+      font-size: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      z-index: 10;
+    }
+
+    /* slide number */
+    .num {
+      position: absolute;
+      bottom: 80px; right: 80px;
+      font-family: 'Courier New', monospace;
+      font-weight: 500;
+      font-size: 16px;
+      color: var(--subtle);
+      letter-spacing: 0.04em;
+      z-index: 10;
+    }
+
+    /* list rows */
+    .list-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    .list-icon {
+      font-size: 28px;
+      line-height: 1;
+      flex-shrink: 0;
+      width: 36px;
+      text-align: center;
+    }
+
+    /* ── SLIDE 1 ── */
+    #s1 { background: var(--ink); }
+
+    #s1 .tag { color: rgba(255,255,255,0.5); font-size: 14px; }
+
+    #s1 .content {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 80px;
+      padding-top: 160px;
+      z-index: 5;
+    }
+    #s1 .para-label {
+      font-family: 'Courier New', monospace;
+      font-weight: 500;
+      font-size: 16px;
+      color: var(--bluel);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    #s1 .t-white-80  { font-weight: 700; font-size: 80px;  color: var(--white); line-height: 1.0; margin: 0; }
+    #s1 .t-amber-110 { font-weight: 700; font-size: 110px; color: var(--amber); line-height: 1.0; margin: 0; }
+    #s1 .t-white-86  { font-weight: 700; font-size: 86px;  color: var(--white); line-height: 0.95; margin: 0; }
+
+    #s1 .bottom {
+      position: absolute;
+      bottom: 110px; left: 80px;
+      z-index: 5;
+    }
+    #s1 .subtitle { font-weight: 400; font-size: 32px; color: var(--muted); margin: 0 0 18px 0; }
+    #s1 .cta      { font-weight: 600; font-size: 24px; color: var(--blue); }
+
+    /* decorative ? */
+    #s1 .qmark {
+      position: absolute;
+      top: 100px; right: 80px;
+      z-index: 3;
+    }
+
+    /* ── SLIDE 2 ── */
+    #s2 { background: linear-gradient(180deg, var(--navy) 0%, var(--ink) 100%); }
+    #s2 .tag { color: var(--bluel); }
+
+    #s2 .content {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 80px; padding-top: 160px;
+      z-index: 5;
+    }
+    #s2 .quote-open  { font-weight: 700; font-size: 120px; color: rgba(245,158,11,0.3); line-height: 0.7; margin: 0; }
+    #s2 .quote-close { font-weight: 700; font-size: 120px; color: rgba(245,158,11,0.3); line-height: 0.7; margin: 0; text-align: right; }
+    #s2 .t-white-72  { font-weight: 700; font-size: 72px;  color: var(--white); line-height: 1.05; margin: 0; }
+    #s2 .t-amber-100 { font-weight: 700; font-size: 100px; color: var(--amber); line-height: 1.0;  margin: 0; }
+    #s2 .spacer60 { height: 60px; }
+    #s2 .body-text  { font-weight: 400; font-size: 36px; color: rgba(255,255,255,0.85); line-height: 1.4; margin: 0 0 24px 0; }
+    #s2 .closing    { font-weight: 600; font-size: 44px; color: var(--white); margin: 0; }
+
+    /* ── SLIDE 3 ── */
+    #s3 { background: var(--ink); }
+    #s3 .tag { color: var(--bluel); }
+
+    #s3 .content {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 80px; padding-top: 160px;
+      z-index: 5;
+    }
+    #s3 .t-white-76  { font-weight: 700; font-size: 76px;  color: var(--white); line-height: 1.05; margin: 0; }
+    #s3 .t-white-72  { font-weight: 700; font-size: 72px;  color: var(--white); line-height: 1.05; margin: 0; }
+    #s3 .t-semi-56   { font-weight: 600; font-size: 56px;  color: rgba(255,255,255,0.85); line-height: 1.1; margin: 0; }
+    #s3 .t-amber-96  { font-weight: 700; font-size: 96px;  color: var(--amber); line-height: 1.0; margin: 0; }
+    #s3 .spacer60 { height: 60px; }
+    #s3 .list-text   { font-weight: 600; font-size: 38px; color: var(--white); }
+    #s3 .check-icon  { color: var(--amber); }
+    #s3 .mono-note {
+      font-family: 'Courier New', monospace;
+      font-weight: 500; font-size: 24px;
+      color: var(--amber); letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-top: 10px;
+    }
+
+    /* ── SLIDE 4 ── */
+    #s4 { background: linear-gradient(180deg, var(--navy) 0%, var(--ink) 100%); }
+    #s4 .tag { color: var(--bluel); }
+
+    #s4 .content {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 80px; padding-top: 160px;
+      z-index: 5;
+    }
+    #s4 .t-white-76  { font-weight: 700; font-size: 76px; color: var(--white); line-height: 1.05; margin: 0; }
+    #s4 .t-white-72  { font-weight: 700; font-size: 72px; color: var(--white); line-height: 1.05; margin: 0; }
+    #s4 .spacer40 { height: 40px; }
+    #s4 .spacer50 { height: 50px; }
+    #s4 .arrow-down { font-size: 80px; color: var(--amber); line-height: 1; text-align: center; }
+    #s4 .list-text  { font-weight: 600; font-size: 44px; color: var(--white); }
+    #s4 .x-icon     { color: var(--amber); }
+    #s4 .italic-note {
+      font-weight: 400; font-style: italic;
+      font-size: 28px; color: var(--muted);
+      line-height: 1.45; margin-top: 8px;
+    }
+
+    /* ── SLIDE 5 ── */
+    #s5 { background: var(--ink); }
+    #s5 .tag { color: var(--bluel); }
+
+    #s5 .content {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 80px; padding-top: 160px;
+      z-index: 5;
+    }
+    #s5 .t-white-76  { font-weight: 700; font-size: 76px;  color: var(--white); line-height: 1.05; margin: 0; }
+    #s5 .t-semi-56   { font-weight: 600; font-size: 56px;  color: rgba(255,255,255,0.85); line-height: 1.1; margin: 0; }
+    #s5 .t-green-110 { font-weight: 700; font-size: 110px; color: var(--green); line-height: 1.0; margin: 0; }
+    #s5 .spacer60 { height: 60px; }
+    #s5 .heading    { font-weight: 600; font-size: 32px; color: var(--muted); margin: 0 0 20px 0; }
+    #s5 .list-text  { font-weight: 600; font-size: 36px; color: var(--white); }
+    #s5 .list-text-green { font-weight: 700; font-size: 40px; color: var(--green); }
+    #s5 .plus-icon  { color: var(--green); }
+
+    /* ── SLIDE 6 ── */
+    #s6 { background: linear-gradient(180deg, var(--navy) 0%, var(--ink) 100%); }
+    #s6 .tag { color: var(--bluel); }
+
+    #s6 .content {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 80px; padding-top: 160px;
+      z-index: 5;
+    }
+    #s6 .strikethrough {
+      font-weight: 600; font-size: 52px;
+      color: var(--subtle);
+      text-decoration: line-through;
+      margin: 0;
+    }
+    #s6 .spacer50 { height: 50px; }
+    #s6 .spacer30 { height: 30px; }
+    #s6 .spacer60 { height: 60px; }
+    #s6 .mono-label {
+      font-family: 'Courier New', monospace;
+      font-weight: 500; font-size: 24px;
+      color: var(--amber); letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    #s6 .t-white-72  { font-weight: 700; font-size: 72px;  color: var(--white); line-height: 1.05; margin: 0; }
+    #s6 .t-amber-110 { font-weight: 700; font-size: 110px; color: var(--amber); line-height: 1.0;  margin: 0; }
+    #s6 .body-text   { font-weight: 400; font-size: 36px; color: rgba(255,255,255,0.85); line-height: 1.4; margin: 0 0 12px 0; }
+    #s6 .bold-line   { font-weight: 600; font-size: 40px; color: var(--white); margin: 0; line-height: 1.2; }
+
+    /* ── SLIDE 7 ── */
+    #s7 { background: var(--blue); }
+    #s7 .tag { color: rgba(255,255,255,0.6); }
+    #s7 .num { color: rgba(255,255,255,0.6); }
+
+    #s7 .content {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 80px; padding-top: 160px;
+      z-index: 5;
+    }
+    #s7 .t-white-96 { font-weight: 700; font-size: 96px;  color: var(--white); line-height: 1.0; margin: 0; }
+    #s7 .t-ink-110  { font-weight: 700; font-size: 110px; color: var(--ink);   line-height: 1.0; margin: 0; }
+    #s7 .spacer70 { height: 70px; }
+    #s7 .sub-reg  { font-weight: 400; font-size: 40px; color: rgba(255,255,255,0.9); margin: 0 0 10px 0; }
+    #s7 .sub-semi { font-weight: 600; font-size: 44px; color: var(--white); margin: 0 0 10px 0; }
+    #s7 .sub-bold { font-weight: 700; font-size: 64px; color: var(--white); margin: 0; }
+    #s7 .spacer60 { height: 60px; }
+
+    #s7 .cta-box {
+      background: var(--ink);
+      border: 2px solid var(--white);
+      border-radius: 16px;
+      padding: 40px 60px;
+      display: flex; flex-direction: column; align-items: center;
+      width: fit-content;
+    }
+    #s7 .cta-big  { font-weight: 700; font-size: 48px; color: var(--white); line-height: 1; margin: 0 0 10px 0; }
+    #s7 .cta-mono {
+      font-family: 'Courier New', monospace;
+      font-weight: 500; font-size: 28px;
+      color: rgba(255,255,255,0.8); letter-spacing: 0.04em;
+      margin: 0;
+    }
+
+    #s7 .brand-wrap {
+      position: absolute;
+      bottom: 100px; left: 0; right: 0;
+      text-align: center; z-index: 5;
+    }
+    #s7 .brand-name { font-weight: 700; font-size: 32px; color: var(--white); margin: 0 0 6px 0; }
+    #s7 .brand-tag  { font-weight: 400; font-size: 20px; color: rgba(255,255,255,0.7); margin: 0; }
+  </style>
+</head>
+<body>
+
+  <div class="tip">TIP: Usá Cmd+Shift+4 para capturar cada slide individualmente</div>
+
+  <!-- ════════════════════════════════════════
+       SLIDE 1 — PORTADA
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s1">
+
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+
+    <div class="tag" style="font-family:'Courier New',monospace;font-size:14px;letter-spacing:0.04em;text-transform:uppercase;font-weight:500;">
+      PREGUNTAS REALES · 01
+    </div>
+
+    <!-- Decorative ? -->
+    <div class="qmark">
+      <svg width="120" height="160" viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M40 48C40 32 52 20 68 20C84 20 96 32 96 48C96 64 82 74 72 82C62 90 60 98 60 108"
+              stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="60" cy="132" r="7" stroke="#F59E0B" stroke-width="2.2"/>
+      </svg>
+    </div>
+
+    <div class="content">
+      <p class="para-label">PARA EMPRENDEDORES</p>
+      <p class="t-white-80">¿Necesito un</p>
+      <p class="t-white-80">contador si soy</p>
+      <p class="t-amber-110">pequeño</p>
+      <p class="t-white-86">CONTRIBUYENTE?</p>
+    </div>
+
+    <div class="bottom">
+      <p class="subtitle">La respuesta honesta que nadie te da.</p>
+      <p class="cta">Deslizá →</p>
+    </div>
+
+    <div class="num">01/07</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SLIDE 2 — LA CREENCIA COMÚN
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s2">
+
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+
+    <div class="tag">LA CREENCIA</div>
+
+    <div class="content">
+      <p class="quote-open">"</p>
+      <p class="t-white-72">Si soy chico,</p>
+      <p class="t-white-72">no necesito</p>
+      <p class="t-amber-100">contador.</p>
+      <p class="quote-close">"</p>
+      <div class="spacer60"></div>
+      <p class="body-text">Es entendible. Cuando recién arrancás,<br>todo gasto extra duele.</p>
+      <p class="closing">Pero ahí empieza el problema real.</p>
+    </div>
+
+    <div class="num">02/07</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SLIDE 3 — LO QUE POCOS SABEN
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s3">
+
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+
+    <div class="tag">LO QUE POCOS SABEN</div>
+
+    <div class="content">
+      <p class="t-white-76">Ser pequeño</p>
+      <p class="t-white-76">contribuyente</p>
+      <p class="t-white-72">NO significa</p>
+      <p class="t-semi-56">estar libre de</p>
+      <p class="t-amber-96">obligaciones.</p>
+
+      <div class="spacer60"></div>
+
+      <div class="list-row">
+        <span class="list-icon check-icon">✓</span>
+        <span class="list-text">Emitir facturas</span>
+      </div>
+      <div class="list-row">
+        <span class="list-icon check-icon">✓</span>
+        <span class="list-text">Declarar IVA mensualmente</span>
+      </div>
+      <div class="list-row">
+        <span class="list-icon check-icon">✓</span>
+        <span class="list-text">Presentar IRP al año</span>
+      </div>
+
+      <p class="mono-note">Con plazos exactos.</p>
+    </div>
+
+    <div class="num">03/07</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SLIDE 4 — EL VERDADERO COSTO
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s4">
+
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+
+    <div class="tag">EL VERDADERO COSTO</div>
+
+    <div class="content">
+      <p class="t-white-76">Lo que <span style="color:#00B37A;">AHORRÁS</span></p>
+      <p class="t-white-72">en contador...</p>
+
+      <div class="spacer40"></div>
+      <p class="arrow-down">↓</p>
+      <div class="spacer40"></div>
+
+      <p class="t-white-76">lo <span style="color:#F59E0B;">PERDÉS</span> en:</p>
+
+      <div class="spacer50"></div>
+
+      <div class="list-row">
+        <span class="list-icon x-icon">×</span>
+        <span class="list-text">Multas</span>
+      </div>
+      <div class="list-row">
+        <span class="list-icon x-icon">×</span>
+        <span class="list-text">Errores costosos</span>
+      </div>
+      <div class="list-row">
+        <span class="list-icon x-icon">×</span>
+        <span class="list-text">Tiempo perdido</span>
+      </div>
+
+      <div class="spacer40"></div>
+      <p class="italic-note">Cuesta más arreglar después que prevenir antes.</p>
+    </div>
+
+    <div class="num">04/07</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SLIDE 5 — LO QUE HACE UN CONTADOR
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s5">
+
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+
+    <div class="tag">VALOR REAL</div>
+
+    <div class="content">
+      <p class="t-white-76">Un contador</p>
+      <p class="t-semi-56">no es solo</p>
+      <p class="t-green-110">PAPELES.</p>
+
+      <div class="spacer60"></div>
+
+      <p class="heading">También:</p>
+
+      <div class="list-row">
+        <span class="list-icon plus-icon">+</span>
+        <span class="list-text">Ordena tus obligaciones del mes</span>
+      </div>
+      <div class="list-row">
+        <span class="list-icon plus-icon">+</span>
+        <span class="list-text">Te avisa de los vencimientos</span>
+      </div>
+      <div class="list-row">
+        <span class="list-icon plus-icon">+</span>
+        <span class="list-text">Te explica qué podés deducir</span>
+      </div>
+      <div class="list-row">
+        <span class="list-icon plus-icon">+</span>
+        <span class="list-text-green">Te libera tiempo para crecer</span>
+      </div>
+    </div>
+
+    <div class="num">05/07</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SLIDE 6 — LA PREGUNTA REAL
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s6">
+
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+
+    <div class="tag">LA PREGUNTA REAL</div>
+
+    <div class="content">
+      <p class="strikethrough">¿Necesito un contador?</p>
+
+      <div class="spacer50"></div>
+
+      <p class="mono-label">LA PREGUNTA REAL ES:</p>
+
+      <div class="spacer30"></div>
+
+      <p class="t-white-72">¿Puedo permitirme</p>
+      <p class="t-amber-110">NO tenerlo?</p>
+
+      <div class="spacer60"></div>
+
+      <p class="body-text">Porque cada hora peleando con papeles</p>
+      <p class="bold-line">es una hora que no le dedicás<br>a tu negocio.</p>
+    </div>
+
+    <div class="num">06/07</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SLIDE 7 — CIERRE + CTA
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s7">
+
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+
+    <div class="tag">CTA · 07</div>
+
+    <div class="content">
+      <p class="t-white-96">Ser pequeño</p>
+      <p class="t-white-96">no significa</p>
+      <p class="t-ink-110">estar SOLO.</p>
+
+      <div class="spacer70"></div>
+
+      <p class="sub-reg">Si arrancaste hace poco</p>
+      <p class="sub-semi">y querés ordenarte desde el día uno,</p>
+      <p class="sub-bold">escribime.</p>
+
+      <div class="spacer60"></div>
+
+      <div class="cta-box">
+        <p class="cta-big">ESCRIBIME</p>
+        <p class="cta-mono">@naberolconta</p>
+      </div>
+    </div>
+
+    <div class="brand-wrap">
+      <p class="brand-name">naberol.</p>
+      <p class="brand-tag">Claridad fiscal, con diseño.</p>
+    </div>
+
+    <div class="num">07/07</div>
+  </div>
+
+</body>
+</html>

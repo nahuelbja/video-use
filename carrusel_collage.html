@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carrusel Collage — RUC Bloqueado · naberol.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --ink: #061A3A;
+    --txt: #FFFFFF;
+    --blue: #1E7AF5;
+    --blue-light: #4F99FF;
+    --green: #00B37A;
+    --amber: #F59E0B;
+    --red: #EF4444;
+    --page: #061A3A;
+    --paper-a: #0C2A5C;
+    --paper-b: #0A2148;
+  }
+
+  html, body {
+    margin: 0; padding: 40px 0;
+    width: 100%;
+    background: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    font-family: 'Geist', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #hint {
+    color: #888;
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px;
+  }
+
+  p { margin: 0; }
+
+  .slide {
+    width: 1080px;
+    height: 1350px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    background-color: var(--page);
+    background-image:
+      repeating-linear-gradient(to right, rgba(79,153,255,0.10) 0, rgba(79,153,255,0.10) 1px, transparent 1px, transparent 54px),
+      repeating-linear-gradient(to bottom, rgba(79,153,255,0.10) 0, rgba(79,153,255,0.10) 1px, transparent 1px, transparent 54px);
+  }
+
+  /* ── Torn paper sheet ── */
+  .sheet {
+    position: absolute;
+    top: 5%; left: 6%;
+    width: 88%; height: 90%;
+    filter: drop-shadow(0 8px 22px rgba(0,0,0,0.45));
+  }
+  .sheet-inner {
+    width: 100%; height: 100%;
+    position: relative;
+    clip-path: polygon(0.0% 2.12%, 14.29% 2.24%, 28.57% 1.96%, 42.86% -2.08%, 57.14% 0.46%, 71.43% -0.38%, 85.71% 0.15%, 100.0% -1.85%, 99.72% 14.29%, 98.61% 28.57%, 99.78% 42.86%, 97.62% 57.14%, 97.93% 71.43%, 99.5% 85.71%, 99.61% 100.0%, 85.71% 99.6%, 71.43% 99.29%, 57.14% 97.79%, 42.86% 99.8%, 28.57% 100.0%, 14.29% 99.9%, 0.0% 99.8%, 0.4% 85.71%, 1.3% 71.43%, 0.34% 57.14%, 0.36% 42.86%, 0.8% 28.57%, 0.5% 14.29%);
+    background-image: radial-gradient(rgba(255,255,255,0.045) 1.4px, transparent 1.4px);
+    background-size: 18px 18px;
+  }
+  .paper-a .sheet-inner { background-color: var(--paper-a); }
+  .paper-b .sheet-inner { background-color: var(--paper-b); }
+  .rot-l { transform: rotate(-0.6deg); }
+  .rot-r { transform: rotate(0.5deg); }
+
+  /* ── Sheet chrome ── */
+  .brand {
+    position: absolute;
+    top: 44px; left: 56px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 6;
+  }
+  .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+  .brand span { font-weight: 700; font-size: 20px; color: var(--txt); }
+
+  .folio {
+    position: absolute;
+    bottom: 40px; left: 56px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px;
+    color: var(--txt);
+    opacity: 0.4;
+    z-index: 6;
+  }
+  .watermark {
+    position: absolute;
+    bottom: 40px; right: 56px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 18px;
+    color: var(--txt);
+    opacity: 0.5;
+    z-index: 6;
+  }
+
+  /* ── Giant cut-out number ── */
+  .cutout-num {
+    position: absolute;
+    top: 30px; left: 48px;
+    z-index: 5;
+    transform: rotate(-4deg);
+    line-height: 1;
+  }
+  .cutout-num .shadow-layer {
+    position: absolute;
+    top: 7px; left: 7px;
+    font-weight: 700;
+    font-size: 240px;
+    line-height: 1;
+    color: rgba(0,0,0,0.4);
+  }
+  .cutout-num .green-layer {
+    position: absolute;
+    top: 3px; left: 3px;
+    font-weight: 700;
+    font-size: 240px;
+    line-height: 1;
+    color: var(--green);
+  }
+  .cutout-num .main-layer {
+    position: relative;
+    font-weight: 700;
+    font-size: 240px;
+    line-height: 1;
+    background-color: #C6D1DC;
+    background-image: radial-gradient(#8FA2B5 2px, transparent 2px), radial-gradient(#8FA2B5 2px, transparent 2px);
+    background-size: 11px 11px;
+    background-position: 0 0, 5.5px 5.5px;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* ── Hand-drawn ellipse (SVG container) ── */
+  .ellipse-svg {
+    position: absolute;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .ellipse-svg path {
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+
+  /* ── Photo cutouts ── */
+  .cutout-photo {
+    position: absolute;
+    z-index: 4;
+  }
+  .cutout-photo .backing {
+    position: absolute;
+    top: -14px; left: -14px;
+    right: -14px; bottom: -14px;
+    background: #14366B;
+    clip-path: polygon(0.0% 2.12%, 14.29% 2.24%, 28.57% 1.96%, 42.86% 0%, 57.14% 0.46%, 71.43% 0%, 85.71% 0.15%, 100.0% 0%, 99.72% 14.29%, 98.61% 28.57%, 99.78% 42.86%, 97.62% 57.14%, 97.93% 71.43%, 99.5% 85.71%, 99.61% 100.0%, 85.71% 99.6%, 71.43% 99.29%, 57.14% 97.79%, 42.86% 99.8%, 28.57% 100.0%, 14.29% 99.9%, 0.0% 99.8%, 0.4% 85.71%, 1.3% 71.43%, 0.34% 57.14%, 0.36% 42.86%, 0.8% 28.57%, 0.5% 14.29%);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+  }
+  .cutout-photo img {
+    position: relative;
+    display: block;
+    filter: none;
+  }
+
+  /* ── Type helpers ── */
+  .serif-it { font-family: 'Instrument Serif', serif; font-style: italic; }
+  .mono { font-family: 'Geist Mono', monospace; }
+
+  /* ════════ SLIDE 1 ════════ */
+  #c1 .alert-label {
+    position: absolute;
+    top: 110px; width: 100%;
+    text-align: center;
+    font-family: 'Geist Mono', monospace;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    color: var(--red);
+    z-index: 5;
+  }
+  #c1 .headline {
+    position: absolute;
+    top: 170px; left: 0; width: 100%;
+    text-align: center;
+    z-index: 5;
+  }
+  #c1 .hl-1 { font-weight: 700; font-size: 100px; color: var(--txt); line-height: 1.05; }
+  #c1 .hl-2 { font-weight: 700; font-size: 58px; color: var(--txt); line-height: 1.2; }
+  #c1 .hl-3 { font-weight: 700; font-size: 92px; color: var(--txt); line-height: 1.15; position: relative; display: inline-block; }
+  #c1 .hl-4 { font-weight: 700; font-size: 58px; color: var(--txt); line-height: 1.2; }
+  #c1 .sos {
+    margin-top: 28px;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 48px;
+    color: var(--blue-light);
+  }
+  #c1 .caption {
+    margin-top: 26px;
+    font-weight: 400;
+    font-size: 26px;
+    color: var(--txt);
+    opacity: 0.7;
+    line-height: 1.4;
+    padding: 0 160px;
+  }
+  #c1 .swipe {
+    position: absolute;
+    bottom: 150px; left: 120px;
+    width: 420px;
+    text-align: left;
+    line-height: 1.5;
+    font-family: 'Geist Mono', monospace;
+    font-size: 20px;
+    color: var(--green);
+    z-index: 6;
+  }
+
+  /* ── Shared content slide layout (2-7) ── */
+  .content-head {
+    position: absolute;
+    top: 110px; left: 330px; right: 90px;
+    z-index: 5;
+  }
+  .content-body {
+    position: absolute;
+    left: 110px; right: 100px;
+    z-index: 5;
+  }
+
+  /* ════════ SLIDE 2 ════════ */
+  #c2 .t1 { font-weight: 700; font-size: 54px; color: var(--txt); line-height: 1.15; }
+  #c2 .t2 { font-weight: 700; font-size: 60px; color: var(--txt); line-height: 1.2; position: relative; display: inline-block; }
+  #c2 .cols {
+    position: absolute;
+    top: 420px; left: 110px; right: 110px;
+    display: flex;
+    z-index: 5;
+  }
+  #c2 .col { flex: 1; padding: 0 34px; }
+  #c2 .col:first-child { padding-left: 0; border-right: 2px solid var(--green); }
+  #c2 .col:last-child { padding-right: 0; }
+  #c2 .col .tag { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 30px; margin-bottom: 16px; }
+  #c2 .col:first-child .tag { color: var(--red); }
+  #c2 .col:last-child .tag { color: var(--amber); }
+  #c2 .col .txt { font-weight: 400; font-size: 28px; color: var(--txt); line-height: 1.45; }
+  #c2 .bottom-line {
+    position: absolute;
+    top: 760px; left: 110px; right: 420px;
+    z-index: 5;
+  }
+  #c2 .bottom-line p { font-weight: 600; font-size: 32px; color: var(--txt); line-height: 1.4; display: inline; }
+  #c2 .bottom-line svg { display: block; margin-top: 6px; }
+
+  /* ════════ SLIDE 3 ════════ */
+  #c3 .t1 { font-weight: 700; font-size: 58px; color: var(--txt); line-height: 1.15; }
+  #c3 .t2 { font-weight: 700; font-size: 72px; color: var(--txt); line-height: 1.2; position: relative; display: inline-block; }
+  #c3 .lead {
+    position: absolute;
+    top: 400px; left: 110px;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 34px;
+    color: var(--green);
+    z-index: 5;
+  }
+  #c3 .causes {
+    position: absolute;
+    top: 470px; left: 110px; right: 440px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  #c3 .cause { display: flex; align-items: flex-start; gap: 18px; }
+  #c3 .cause svg { flex-shrink: 0; margin-top: 2px; }
+  #c3 .cause span { font-weight: 600; font-size: 28px; color: var(--txt); line-height: 1.35; }
+  #c3 .bottom-note {
+    position: absolute;
+    bottom: 170px; left: 430px; right: 120px;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 28px;
+    color: var(--red);
+    line-height: 1.35;
+    z-index: 5;
+  }
+
+  /* ════════ SLIDE 4 ════════ */
+  #c4 .t1 { font-weight: 700; font-size: 58px; color: var(--txt); line-height: 1.15; }
+  #c4 .t2 { font-weight: 700; font-size: 80px; color: var(--txt); line-height: 1.2; position: relative; display: inline-block; }
+  #c4 .losses {
+    position: absolute;
+    top: 440px; left: 110px; right: 420px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  #c4 .loss { display: flex; align-items: flex-start; gap: 18px; }
+  #c4 .loss svg { flex-shrink: 0; margin-top: 4px; }
+  #c4 .loss span { font-weight: 600; font-size: 27px; color: var(--txt); line-height: 1.35; }
+  #c4 .bottom-note {
+    position: absolute;
+    bottom: 130px; left: 110px; right: 460px;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 30px;
+    color: var(--amber);
+    line-height: 1.35;
+    z-index: 5;
+  }
+
+  /* ════════ SLIDE 5 ════════ */
+  #c5 .t1 { font-weight: 700; font-size: 64px; color: var(--txt); line-height: 1.15; }
+  #c5 .t1 .free { font-size: 76px; position: relative; display: inline-block; }
+  #c5 .t2 { font-weight: 700; font-size: 56px; color: var(--txt); line-height: 1.2; }
+  #c5 .steps {
+    position: absolute;
+    top: 460px; left: 110px; right: 110px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 44px;
+  }
+  #c5 .step { display: flex; align-items: baseline; gap: 24px; }
+  #c5 .step .n { font-weight: 700; font-size: 44px; color: var(--blue); flex-shrink: 0; }
+  #c5 .step .txt { font-weight: 600; font-size: 30px; color: var(--txt); line-height: 1.35; }
+  #c5 .bottom-q {
+    position: absolute;
+    top: 760px; left: 110px;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 32px;
+    color: var(--blue-light);
+    z-index: 5;
+  }
+
+  /* ════════ SLIDE 6 ════════ */
+  #c6 .t1 { font-weight: 700; font-size: 52px; color: var(--txt); line-height: 1.15; }
+  #c6 .t2 { font-weight: 700; font-size: 64px; color: var(--txt); line-height: 1.25; position: relative; display: inline-block; }
+  #c6 .steps {
+    position: absolute;
+    top: 430px; left: 110px; right: 420px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  #c6 .step { display: flex; align-items: flex-start; gap: 18px; }
+  #c6 .step svg { flex-shrink: 0; margin-top: 2px; }
+  #c6 .step span { font-weight: 600; font-size: 27px; color: var(--txt); line-height: 1.35; }
+  #c6 .bottom-note {
+    position: absolute;
+    bottom: 130px; left: 110px; right: 460px;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 28px;
+    color: var(--green);
+    line-height: 1.35;
+    z-index: 5;
+  }
+
+  /* ════════ SLIDE 7 ════════ */
+  #c7 .t1 { font-weight: 700; font-size: 56px; color: var(--txt); line-height: 1.15; }
+  #c7 .t2 { font-weight: 700; font-size: 72px; color: var(--txt); line-height: 1.2; position: relative; display: inline-block; }
+  #c7 .stat-block {
+    position: absolute;
+    top: 430px; left: 0; width: 100%;
+    text-align: center;
+    z-index: 5;
+  }
+  #c7 .stat { font-weight: 700; font-size: 92px; color: var(--amber); line-height: 1.1; position: relative; display: inline-block; }
+  #c7 .stat-sub { font-weight: 600; font-size: 32px; color: var(--txt); margin-top: 18px; }
+  #c7 .breakdown {
+    position: absolute;
+    top: 680px; left: 0; width: 100%;
+    text-align: center;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  #c7 .breakdown p {
+    font-family: 'Geist Mono', monospace;
+    font-size: 24px;
+    color: var(--txt);
+    opacity: 0.75;
+  }
+  #c7 .bottom-note {
+    position: absolute;
+    bottom: 160px; left: 400px; right: 100px;
+    text-align: center;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 30px;
+    color: var(--green);
+    z-index: 5;
+  }
+
+  /* ════════ SLIDE 8 ════════ */
+  #c8 .headline {
+    position: absolute;
+    top: 140px; left: 0; width: 100%;
+    text-align: center;
+    z-index: 5;
+  }
+  #c8 .hl { font-weight: 700; font-size: 64px; color: var(--txt); line-height: 1.2; }
+  #c8 .hl-big { font-weight: 700; font-size: 88px; color: var(--txt); line-height: 1.2; position: relative; display: inline-block; }
+  #c8 .check-line {
+    position: absolute;
+    top: 520px; left: 0; width: 100%;
+    text-align: center;
+    font-weight: 600;
+    font-size: 30px;
+    color: var(--txt);
+    z-index: 5;
+  }
+  #c8 .check-line .hoy { position: relative; display: inline-block; padding: 0 8px; }
+  #c8 .cta-block {
+    position: absolute;
+    top: 610px; left: 0; width: 100%;
+    text-align: center;
+    z-index: 5;
+  }
+  #c8 .cta-block .ask {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 36px;
+    color: var(--blue-light);
+  }
+  #c8 .cta-block .handle {
+    font-weight: 700;
+    font-size: 38px;
+    color: var(--txt);
+    margin-top: 12px;
+  }
+  #c8 .cta-block .sub {
+    font-weight: 400;
+    font-size: 26px;
+    color: var(--txt);
+    opacity: 0.7;
+    margin-top: 16px;
+  }
+  #c8 .save-row {
+    position: absolute;
+    top: 850px; left: 0; width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    z-index: 5;
+  }
+  #c8 .save-row span {
+    font-family: 'Geist Mono', monospace;
+    font-size: 20px;
+    color: var(--green);
+  }
+
+  /* doodles */
+  .doodle { position: absolute; z-index: 5; overflow: visible; }
+  .doodle path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div id="hint">Cmd+Shift+4 para capturar</div>
+
+<!-- ════════════════ SLIDE 1 — HOOK ════════════════ -->
+<div class="slide" id="c1">
+  <div class="sheet paper-a rot-l"><div class="sheet-inner"></div></div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+
+  <p class="alert-label">ALERTA · DNIT</p>
+
+  <div class="headline">
+    <p class="hl-1">1 de cada 3</p>
+    <p class="hl-2">contribuyentes está</p>
+    <p class="hl-3">BLOQUEADO
+      <svg class="ellipse-svg" width="560" height="150" viewBox="0 0 560 150" style="top:-22px; left:-30px;">
+        <path d="M 95 22 C 240 -4 540 6 548 66 C 555 122 380 144 230 140 C 95 137 12 116 14 72 C 16 32 105 14 230 12" stroke="#1E7AF5"/>
+      </svg>
+    </p>
+    <p class="hl-4">o suspendido.</p>
+    <p class="sos">¿Sos vos?</p>
+    <p class="caption">Más de 1.300.000 RUC registrados. +30% con restricciones.</p>
+  </div>
+
+  <!-- photo cutout bottom-right -->
+  <div class="cutout-photo" style="bottom:-26px; right:60px; transform:rotate(-2deg);">
+    <div class="backing"></div>
+    <img src="recorte_01.png" width="400" alt="">
+  </div>
+
+  <!-- doodle: green spiral bottom-left -->
+  <svg class="doodle" width="110" height="80" viewBox="0 0 110 80" style="bottom:200px; left:110px;">
+    <path d="M 8 60 C 30 20 70 14 80 34 C 88 50 64 62 52 50 C 42 40 58 26 76 30 C 94 34 102 52 98 68" stroke="#00B37A" stroke-width="3"/>
+  </svg>
+
+  <p class="swipe">Deslizá para saber si estás en ese grupo →</p>
+  <p class="folio">01/08</p>
+  <p class="watermark">@naberolconta</p>
+</div>
+
+<!-- ════════════════ SLIDE 2 — DEFINICIONES ════════════════ -->
+<div class="slide" id="c2">
+  <div class="sheet paper-b rot-r"><div class="sheet-inner"></div></div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+
+  <div class="cutout-num">
+    <span class="shadow-layer">1</span>
+    <span class="green-layer">1</span>
+    <span class="main-layer">1</span>
+  </div>
+
+  <div class="content-head" style="top:130px;">
+    <p class="t1">¿Qué significa</p>
+    <p class="t2">estar bloqueado?
+      <svg class="ellipse-svg" width="430" height="100" viewBox="0 0 430 100" style="top:-8px; left:130px; width:300px;">
+        <path d="M 60 16 C 170 -4 416 4 422 48 C 427 88 290 98 165 94 C 60 91 8 76 10 48 C 12 24 70 12 160 9" stroke="#1E7AF5"/>
+      </svg>
+    </p>
+  </div>
+
+  <div class="cols">
+    <div class="col">
+      <p class="tag">(Bloqueado)</p>
+      <p class="txt">RUC activo pero con restricciones. No podés emitir facturas.</p>
+    </div>
+    <div class="col">
+      <p class="tag">(Suspendido)</p>
+      <p class="txt">Para el fisco, tu empresa no existe operativamente.</p>
+    </div>
+  </div>
+
+  <div class="bottom-line">
+    <p>En ambos casos: no operás legalmente.</p>
+    <svg width="480" height="14" viewBox="0 0 480 14">
+      <path d="M 4 8 C 120 3 250 11 350 6 C 400 4 450 8 476 6" stroke="#1E7AF5" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="cutout-photo" style="bottom:-20px; right:30px; transform:rotate(2.5deg);">
+    <div class="backing"></div>
+    <img src="recorte_02.png" width="360" alt="">
+  </div>
+
+  <!-- doodle: little dashes -->
+  <svg class="doodle" width="80" height="60" viewBox="0 0 80 60" style="top:340px; right:130px;">
+    <path d="M 10 50 L 24 30 M 34 54 L 44 32 M 58 52 L 64 34" stroke="#00B37A" stroke-width="3"/>
+  </svg>
+
+  <p class="folio">02/08</p>
+  <p class="watermark">@naberolconta</p>
+</div>
+
+<!-- ════════════════ SLIDE 3 — CAUSAS ════════════════ -->
+<div class="slide" id="c3">
+  <div class="sheet paper-a rot-l"><div class="sheet-inner"></div></div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+
+  <div class="cutout-num">
+    <span class="shadow-layer">2</span>
+    <span class="green-layer">2</span>
+    <span class="main-layer">2</span>
+  </div>
+
+  <div class="content-head" style="top:130px;">
+    <p class="t1">¿Por qué te</p>
+    <p class="t2">bloquean?
+      <svg class="ellipse-svg" width="400" height="110" viewBox="0 0 400 110" style="top:-12px; left:-24px;">
+        <path d="M 60 18 C 160 -6 388 4 394 52 C 399 94 270 106 155 102 C 56 99 6 82 8 52 C 10 26 66 13 150 10" stroke="#1E7AF5"/>
+      </svg>
+    </p>
+  </div>
+
+  <p class="lead">las causas más comunes:</p>
+
+  <div class="causes">
+    <div class="cause">
+      <svg width="26" height="32" viewBox="0 0 26 32"><path d="M 13 4 C 18 4 22 8 21 13 C 20 17 16 19 13 19 C 9 19 5 16 5 12 C 5 8 9 4 13 4 Z M 13 19 L 12 29" stroke="#1E7AF5" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+      <span>Omisión de declaraciones (IVA, IRE, IRP)</span>
+    </div>
+    <div class="cause">
+      <svg width="26" height="32" viewBox="0 0 26 32"><path d="M 13 4 C 18 4 22 8 21 13 C 20 17 16 19 13 19 C 9 19 5 16 5 12 C 5 8 9 4 13 4 Z M 13 19 L 12 29" stroke="#1E7AF5" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+      <span>Deudas impagas con la DNIT</span>
+    </div>
+    <div class="cause">
+      <svg width="26" height="32" viewBox="0 0 26 32"><path d="M 13 4 C 18 4 22 8 21 13 C 20 17 16 19 13 19 C 9 19 5 16 5 12 C 5 8 9 4 13 4 Z M 13 19 L 12 29" stroke="#1E7AF5" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+      <span>Datos del RUC desactualizados</span>
+    </div>
+    <div class="cause">
+      <svg width="26" height="32" viewBox="0 0 26 32"><path d="M 13 4 C 18 4 22 8 21 13 C 20 17 16 19 13 19 C 9 19 5 16 5 12 C 5 8 9 4 13 4 Z M 13 19 L 12 29" stroke="#1E7AF5" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+      <span>Timbrado vencido sin renovar</span>
+    </div>
+    <div class="cause">
+      <svg width="26" height="32" viewBox="0 0 26 32"><path d="M 13 4 C 18 4 22 8 21 13 C 20 17 16 19 13 19 C 9 19 5 16 5 12 C 5 8 9 4 13 4 Z M 13 19 L 12 29" stroke="#1E7AF5" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+      <span>Inactividad prolongada sin comunicar</span>
+    </div>
+  </div>
+
+  <p class="bottom-note">Cualquiera te frena de un día para el otro.</p>
+
+  <div class="cutout-photo" style="bottom:-20px; left:40px; transform:rotate(-2.5deg);">
+    <div class="backing"></div>
+    <img src="recorte_03.png" width="340" alt="">
+  </div>
+
+  <!-- doodle: arrow -->
+  <svg class="doodle" width="120" height="90" viewBox="0 0 120 90" style="bottom:260px; right:140px;">
+    <path d="M 10 14 C 50 30 80 50 100 72 M 100 72 L 78 66 M 100 72 L 96 50" stroke="#00B37A" stroke-width="3"/>
+  </svg>
+
+  <p class="folio">03/08</p>
+  <p class="watermark">@naberolconta</p>
+</div>
+
+<!-- ════════════════ SLIDE 4 — CONSECUENCIAS ════════════════ -->
+<div class="slide" id="c4">
+  <div class="sheet paper-b rot-r"><div class="sheet-inner"></div></div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+
+  <div class="cutout-num">
+    <span class="shadow-layer">3</span>
+    <span class="green-layer">3</span>
+    <span class="main-layer">3</span>
+  </div>
+
+  <div class="content-head" style="top:130px;">
+    <p class="t1">Lo que te</p>
+    <p class="t2">cuesta.
+      <svg class="ellipse-svg" width="330" height="120" viewBox="0 0 330 120" style="top:-14px; left:-28px;">
+        <path d="M 52 20 C 140 -6 322 6 326 58 C 330 102 222 116 128 111 C 46 107 4 88 6 56 C 8 28 58 14 130 11" stroke="#EF4444"/>
+      </svg>
+    </p>
+  </div>
+
+  <div class="losses">
+    <div class="loss">
+      <svg width="26" height="26" viewBox="0 0 26 26"><path d="M 4 5 C 10 11 18 19 22 23 M 22 4 C 16 10 9 18 4 22" stroke="#EF4444" stroke-width="3.4" fill="none" stroke-linecap="round"/></svg>
+      <span>No emitís facturas → perdés ventas</span>
+    </div>
+    <div class="loss">
+      <svg width="26" height="26" viewBox="0 0 26 26"><path d="M 5 4 C 11 11 17 18 23 22 M 21 5 C 15 11 9 17 4 23" stroke="#EF4444" stroke-width="3.4" fill="none" stroke-linecap="round"/></svg>
+      <span>Tus clientes no deducen el IVA</span>
+    </div>
+    <div class="loss">
+      <svg width="26" height="26" viewBox="0 0 26 26"><path d="M 4 6 C 10 11 18 18 22 22 M 22 5 C 16 11 9 17 5 22" stroke="#EF4444" stroke-width="3.4" fill="none" stroke-linecap="round"/></svg>
+      <span>Sin contratos con el Estado (DNCP)</span>
+    </div>
+    <div class="loss">
+      <svg width="26" height="26" viewBox="0 0 26 26"><path d="M 5 5 C 10 12 17 18 22 23 M 22 4 C 17 10 10 17 4 22" stroke="#EF4444" stroke-width="3.4" fill="none" stroke-linecap="round"/></svg>
+      <span>Multas por cada declaración omitida</span>
+    </div>
+    <div class="loss">
+      <svg width="26" height="26" viewBox="0 0 26 26"><path d="M 4 4 C 10 11 17 17 23 23 M 22 5 C 16 10 9 18 5 23" stroke="#EF4444" stroke-width="3.4" fill="none" stroke-linecap="round"/></svg>
+      <span>Afecta tus obligaciones patronales</span>
+    </div>
+  </div>
+
+  <p class="bottom-note">ojo: muchos se enteran cuando ya es tarde.</p>
+
+  <div class="cutout-photo" style="bottom:-20px; right:40px; transform:rotate(2deg);">
+    <div class="backing"></div>
+    <img src="recorte_04.png" width="350" alt="">
+  </div>
+
+  <p class="folio">04/08</p>
+  <p class="watermark">@naberolconta</p>
+</div>
+
+<!-- ════════════════ SLIDE 5 — CÓMO SABER ════════════════ -->
+<div class="slide" id="c5">
+  <div class="sheet paper-a rot-l"><div class="sheet-inner"></div></div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+
+  <div class="cutout-num">
+    <span class="shadow-layer">4</span>
+    <span class="green-layer">4</span>
+    <span class="main-layer">4</span>
+  </div>
+
+  <div class="content-head" style="top:120px;">
+    <p class="t1">Revisalo <span class="free">gratis
+      <svg class="ellipse-svg" width="300" height="110" viewBox="0 0 300 110" style="top:-10px; left:-30px;">
+        <path d="M 48 18 C 130 -6 292 6 296 54 C 300 96 200 108 116 103 C 42 99 4 82 6 52 C 8 26 52 13 118 10" stroke="#00B37A"/>
+      </svg></span>
+    </p>
+    <p class="t2">en 2 minutos.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step"><span class="n">1.</span><span class="txt">Entrá a dnit.gov.py</span></div>
+    <div class="step"><span class="n">2.</span><span class="txt">Andá a Consulta de RUC o al portal Marangatú</span></div>
+    <div class="step"><span class="n">3.</span><span class="txt">Revisá tu estado y declaraciones pendientes</span></div>
+  </div>
+
+  <p class="bottom-q">¿Todo en orden... o hay alertas?</p>
+
+  <div class="cutout-photo" style="bottom:-30px; left:50%; margin-left:-195px; transform:rotate(-1.5deg);">
+    <div class="backing"></div>
+    <img src="recorte_05.png" width="390" alt="">
+  </div>
+
+  <!-- doodle: dashes -->
+  <svg class="doodle" width="80" height="60" viewBox="0 0 80 60" style="top:330px; right:150px;">
+    <path d="M 10 50 L 24 30 M 34 54 L 44 32 M 58 52 L 64 34" stroke="#1E7AF5" stroke-width="3"/>
+  </svg>
+
+  <p class="folio">05/08</p>
+  <p class="watermark">@naberolconta</p>
+</div>
+
+<!-- ════════════════ SLIDE 6 — REGULARIZACIÓN ════════════════ -->
+<div class="slide" id="c6">
+  <div class="sheet paper-b rot-r"><div class="sheet-inner"></div></div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+
+  <div class="cutout-num">
+    <span class="shadow-layer">5</span>
+    <span class="green-layer">5</span>
+    <span class="main-layer">5</span>
+  </div>
+
+  <div class="content-head" style="top:130px;">
+    <p class="t1">El camino para</p>
+    <p class="t2">regularizarte
+      <svg class="ellipse-svg" width="440" height="100" viewBox="0 0 440 100" style="top:-6px; left:-26px;">
+        <path d="M 64 16 C 180 -6 430 4 436 46 C 441 84 300 96 170 92 C 62 89 8 74 10 46 C 12 22 72 11 165 8" stroke="#00B37A"/>
+      </svg>
+    </p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <svg width="28" height="26" viewBox="0 0 28 26"><path d="M 4 14 C 8 17 11 21 13 23 C 17 16 22 8 26 4" stroke="#00B37A" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Identificá qué originó el bloqueo</span>
+    </div>
+    <div class="step">
+      <svg width="28" height="26" viewBox="0 0 28 26"><path d="M 4 13 C 8 16 11 20 13 23 C 17 15 22 8 26 4" stroke="#00B37A" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Presentá las declaraciones pendientes en Marangatú</span>
+    </div>
+    <div class="step">
+      <svg width="28" height="26" viewBox="0 0 28 26"><path d="M 5 14 C 8 17 11 21 14 23 C 18 16 22 8 26 5" stroke="#00B37A" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Pagá o pedí plan de facilidades de pago</span>
+    </div>
+    <div class="step">
+      <svg width="28" height="26" viewBox="0 0 28 26"><path d="M 4 14 C 8 16 11 20 13 23 C 17 16 22 9 26 4" stroke="#00B37A" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Actualizá tus datos del RUC</span>
+    </div>
+    <div class="step">
+      <svg width="28" height="26" viewBox="0 0 28 26"><path d="M 4 13 C 8 17 11 21 13 23 C 17 15 22 8 26 4" stroke="#00B37A" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Solicitá la rehabilitación de tu RUC</span>
+    </div>
+  </div>
+
+  <p class="bottom-note">Con todo en regla, la reactivación es rápida.</p>
+
+  <div class="cutout-photo" style="bottom:-20px; right:40px; transform:rotate(2.5deg);">
+    <div class="backing"></div>
+    <img src="recorte_06.png" width="340" alt="">
+  </div>
+
+  <p class="folio">06/08</p>
+  <p class="watermark">@naberolconta</p>
+</div>
+
+<!-- ════════════════ SLIDE 7 — EL COSTO ════════════════ -->
+<div class="slide" id="c7">
+  <div class="sheet paper-a rot-l"><div class="sheet-inner"></div></div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+
+  <div class="cutout-num">
+    <span class="shadow-layer">6</span>
+    <span class="green-layer">6</span>
+    <span class="main-layer">6</span>
+  </div>
+
+  <div class="content-head" style="top:130px;">
+    <p class="t1">¿Cuánto cuesta</p>
+    <p class="t2">ignorarlo?
+      <svg class="ellipse-svg" width="380" height="110" viewBox="0 0 380 110" style="top:-12px; left:-26px;">
+        <path d="M 56 18 C 152 -6 372 4 376 52 C 380 94 256 106 146 102 C 52 99 4 82 6 52 C 8 26 62 13 142 10" stroke="#F59E0B"/>
+      </svg>
+    </p>
+  </div>
+
+  <div class="stat-block">
+    <p class="stat">G. 1.500.000+
+      <svg class="ellipse-svg" width="640" height="20" viewBox="0 0 640 20" style="bottom:-18px; left:0; top:auto;">
+        <path d="M 6 12 C 160 4 340 16 480 8 C 540 5 600 11 634 8" stroke="#F59E0B" stroke-width="5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </p>
+    <p class="stat-sub">en multas por 6 meses de IVA omitido</p>
+  </div>
+
+  <div class="breakdown">
+    <p>multa: 50% del impuesto omitido</p>
+    <p>IVA promedio: G. 500.000/mes × 6</p>
+    <p>+ intereses acumulados</p>
+  </div>
+
+  <p class="bottom-note">resolverlo hoy siempre es más barato.</p>
+
+  <div class="cutout-photo" style="bottom:-20px; left:40px; transform:rotate(-2deg);">
+    <div class="backing"></div>
+    <img src="recorte_07.png" width="330" alt="">
+  </div>
+
+  <!-- doodle: spiral -->
+  <svg class="doodle" width="110" height="80" viewBox="0 0 110 80" style="bottom:240px; right:120px;">
+    <path d="M 8 60 C 30 20 70 14 80 34 C 88 50 64 62 52 50 C 42 40 58 26 76 30 C 94 34 102 52 98 68" stroke="#1E7AF5" stroke-width="3"/>
+  </svg>
+
+  <p class="folio">07/08</p>
+  <p class="watermark">@naberolconta</p>
+</div>
+
+<!-- ════════════════ SLIDE 8 — CTA ════════════════ -->
+<div class="slide" id="c8">
+  <div class="sheet paper-b rot-r"><div class="sheet-inner"></div></div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+
+  <div class="headline">
+    <p class="hl">Tu RUC define</p>
+    <p class="hl">si podés operar</p>
+    <p class="hl-big">o no.
+      <svg class="ellipse-svg" width="320" height="130" viewBox="0 0 320 130" style="top:-16px; left:-60px;">
+        <path d="M 50 22 C 134 -8 312 6 316 62 C 320 110 216 126 124 120 C 44 115 4 96 6 60 C 8 30 56 16 126 12" stroke="#1E7AF5"/>
+      </svg>
+    </p>
+  </div>
+
+  <p class="check-line">Revisá tu situación <span class="hoy">HOY
+    <svg class="ellipse-svg" width="130" height="64" viewBox="0 0 130 64" style="top:-12px; left:-12px;">
+      <path d="M 24 12 C 60 -4 126 4 127 32 C 128 54 84 62 50 59 C 20 56 2 46 3 30 C 4 18 26 10 56 8" stroke="#F59E0B" stroke-width="3.6"/>
+    </svg></span> en dnit.gov.py</p>
+
+  <div class="cta-block">
+    <p class="ask">¿Necesitás orientación?</p>
+    <p class="handle">Escribime → @naberolconta</p>
+    <p class="sub">Te explico sin vueltas y en paraguayo 🇵🇾</p>
+  </div>
+
+  <div class="save-row">
+    <svg width="22" height="28" viewBox="0 0 22 28"><path d="M 4 4 C 9 3 14 3 18 4 C 18 11 18 18 18 25 C 15 22 12 20 11 19 C 9 20 6 23 4 25 C 4 18 4 11 4 4 Z" stroke="#00B37A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Guardá este carrusel.</span>
+  </div>
+
+  <div class="cutout-photo" style="bottom:-30px; left:50%; margin-left:-150px; transform:rotate(1.5deg);">
+    <div class="backing"></div>
+    <img src="recorte_08.png" width="300" alt="">
+  </div>
+
+  <p class="folio">08/08</p>
+  <p class="watermark">@naberolconta</p>
+</div>
+
+</body>
+</html>

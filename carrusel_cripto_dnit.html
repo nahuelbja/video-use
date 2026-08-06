@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Carrusel — Cripto DNIT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    margin:0; padding:40px 0;
+    width:100%;
+    background:#1a1a1a;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:40px;
+    font-family:'Geist', 'Inter', sans-serif;
+  }
+  .tip{
+    font-family:'Geist Mono', monospace;
+    font-size:14px;
+    color:rgba(255,255,255,0.6);
+  }
+  .slide{
+    width:1080px; height:1350px;
+    position:relative;
+    overflow:hidden;
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    padding:80px;
+    background:#061A3A;
+    color:#fff;
+  }
+  .slide.navy-grad{
+    background:linear-gradient(180deg, #0A4BA6 0%, #061A3A 65%);
+  }
+  .slide.on-blue{
+    background:#1E7AF5;
+  }
+
+  /* header / footer shared */
+  .s-head{
+    display:flex; justify-content:space-between; align-items:center;
+    flex-shrink:0;
+  }
+  .logo{
+    display:flex; align-items:center; gap:10px;
+  }
+  .logo .dot{
+    width:10px; height:10px; border-radius:50%;
+    background:#1E7AF5;
+  }
+  .on-blue .logo .dot{ background:#061A3A; }
+  .logo span{
+    font-weight:700; font-size:22px; color:#fff;
+  }
+  .s-label{
+    font-family:'Geist Mono', monospace;
+    font-size:16px;
+    letter-spacing:0.06em;
+    color:#4F99FF;
+  }
+  .on-blue .s-label{ color:rgba(255,255,255,0.6); }
+  .s-foot{
+    display:flex; justify-content:flex-end;
+    flex-shrink:0;
+  }
+  .folio{
+    font-family:'Geist Mono', monospace;
+    font-size:16px;
+    color:rgba(255,255,255,0.4);
+  }
+  .on-blue .folio{ color:rgba(255,255,255,0.6); }
+
+  .s-body{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    min-height:0;
+  }
+
+  /* crypto coin components */
+  .coin{
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .coin.btc{ background:#F7931A; color:#fff; font-weight:700; }
+  .coin.usdt{ background:#26A17B; color:#fff; font-weight:700; }
+  .coin.eth{ background:#627EEA; }
+  .coin.sol{ background:linear-gradient(135deg,#9945FF,#14F195); flex-direction:column; gap:6px; }
+  .sol-bar{ background:#fff; border-radius:2px; }
+  .bnb-outer{ display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .bnb-sq{ background:#F3BA2F; transform:rotate(45deg); display:flex; align-items:center; justify-content:center; }
+  .bnb-sq-inner{ background:#fff; transform:rotate(-45deg); }
+  .nft-badge{
+    border-radius:14px;
+    background:linear-gradient(135deg,#FF006E,#8338EC);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:700;
+    flex-shrink:0;
+  }
+
+  /* ════════ SLIDE 1 — PORTADA ════════ */
+  #c1{
+    background:
+      radial-gradient(circle at 50% 45%, rgba(247,147,26,0.08), transparent 60%),
+      #061A3A;
+  }
+  #c1 .float-coin{ position:absolute; opacity:0.15; }
+  #c1 .s-body{ align-items:center; text-align:center; gap:0; }
+  #c1 .pre{
+    font-family:'Geist Mono', monospace;
+    font-size:20px; letter-spacing:0.08em;
+    color:#F59E0B;
+    margin-bottom:28px;
+  }
+  #c1 .title{ font-weight:700; font-size:76px; color:#fff; line-height:1.12; }
+  #c1 .title.amber{
+    font-size:104px; color:#F59E0B;
+    text-shadow:0 0 20px rgba(245,158,11,0.3);
+    line-height:1.1;
+  }
+  #c1 .coin-row{
+    display:flex; gap:24px; justify-content:center;
+    margin-top:44px;
+  }
+  #c1 .sub{
+    font-weight:400; font-size:30px;
+    color:rgba(255,255,255,0.7);
+    text-align:center;
+    margin-top:60px;
+  }
+  #c1 .cta{
+    font-family:'Geist Mono', monospace;
+    font-weight:600; font-size:24px;
+    color:#1E7AF5;
+    text-align:center;
+    margin-top:22px;
+  }
+
+  /* ════════ SLIDE 2 ════════ */
+  #c2 .s-body{ align-items:center; text-align:center; gap:0; }
+  #c2 .badge{
+    display:inline-flex; align-items:center;
+    background:rgba(245,158,11,0.15);
+    border:2px solid #F59E0B;
+    border-radius:10px;
+    padding:18px 30px;
+    font-family:'Geist Mono', monospace;
+    font-size:22px; color:#F59E0B;
+    margin-bottom:46px;
+  }
+  #c2 .t1{ font-weight:700; font-size:78px; color:#fff; line-height:1.15; }
+  #c2 .t2{ font-weight:600; font-size:48px; color:rgba(255,255,255,0.85); line-height:1.25; margin-top:6px; }
+  #c2 .t3{ font-weight:700; font-size:54px; color:#fff; line-height:1.25; margin-top:14px; }
+  #c2 .t4{ font-weight:700; font-size:94px; color:#00B37A; line-height:1.1; margin-top:6px; }
+  #c2 .t5{ font-weight:600; font-size:42px; color:#fff; line-height:1.3; margin-top:14px; }
+  #c2 .coin-row{ display:flex; gap:22px; justify-content:center; margin-top:54px; }
+  #c2 .tags{
+    font-family:'Geist Mono', monospace;
+    font-size:17px; letter-spacing:0.03em;
+    color:rgba(255,255,255,0.6);
+    margin-top:26px;
+    max-width:760px;
+  }
+
+  /* ════════ SLIDE 3 ════════ */
+  #c3 .title{ font-weight:700; font-size:78px; color:#fff; line-height:1.1; }
+  #c3 .title.amber{ font-size:94px; color:#F59E0B; }
+  #c3 .subtitle{
+    font-weight:600; font-size:34px;
+    color:rgba(255,255,255,0.85);
+    margin-top:34px; margin-bottom:26px;
+  }
+  #c3 .list{ display:flex; flex-direction:column; gap:18px; }
+  #c3 .item{ display:flex; align-items:center; gap:20px; }
+  #c3 .item .ic{ font-size:34px; flex-shrink:0; width:44px; }
+  #c3 .item .tx{ font-weight:600; font-size:30px; color:#fff; }
+  #c3 .hi-box{
+    margin-top:30px;
+    background:rgba(245,158,11,0.12);
+    border:1px solid #F59E0B;
+    border-radius:10px;
+    padding:22px 26px;
+    font-family:'Geist Mono', monospace;
+    font-size:20px; color:#fff; line-height:1.5;
+  }
+
+  /* ════════ SLIDE 4 ════════ */
+  #c4 .title{ font-weight:700; font-size:60px; color:#fff; line-height:1.15; }
+  #c4 .title.green{ font-size:88px; color:#00B37A; }
+  #c4 .grid{
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-top:34px;
+  }
+  #c4 .card{
+    background:rgba(255,255,255,0.04);
+    border-left:3px solid #1E7AF5;
+    padding:20px;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  #c4 .card .ic{ font-size:30px; }
+  #c4 .card .lb{ font-weight:600; font-size:24px; color:#fff; line-height:1.25; }
+  #c4 .note{
+    font-family:'Geist Mono', monospace;
+    font-style:italic; font-size:20px;
+    color:rgba(255,255,255,0.7);
+    text-align:center;
+    margin-top:28px;
+  }
+
+  /* ════════ SLIDE 5 ════════ */
+  #c5 .title{ font-weight:700; font-size:78px; color:#fff; line-height:1.15; }
+  #c5 .title.amber{ color:#F59E0B; }
+  #c5 .timeline{
+    display:flex; align-items:flex-start; justify-content:center;
+    margin-top:50px; margin-bottom:46px;
+    gap:0;
+  }
+  #c5 .tl-node{ display:flex; flex-direction:column; align-items:center; width:220px; }
+  #c5 .tl-circle{
+    width:84px; height:84px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:20px;
+    margin-bottom:14px;
+  }
+  #c5 .tl-circle.green{ background:#00B37A; color:#fff; }
+  #c5 .tl-circle.amber{ background:#F59E0B; color:#061A3A; }
+  #c5 .tl-label{
+    font-family:'Geist Mono', monospace;
+    font-size:15px; color:rgba(255,255,255,0.7);
+  }
+  #c5 .tl-line{
+    flex:1; height:0; border-top:2px dashed rgba(255,255,255,0.35);
+    margin-top:42px;
+  }
+  #c5 .points{ display:flex; flex-direction:column; gap:18px; }
+  #c5 .point{ display:flex; gap:16px; align-items:flex-start; }
+  #c5 .point .ar{ color:#4F99FF; font-size:28px; flex-shrink:0; }
+  #c5 .point .tx{ font-weight:600; font-size:27px; color:#fff; line-height:1.3; }
+  #c5 .info-box{
+    margin-top:32px;
+    background:rgba(30,122,245,0.12);
+    border:1px solid #1E7AF5;
+    border-radius:10px;
+    padding:20px 24px;
+    font-family:'Geist Mono', monospace;
+    font-size:19px; color:#fff; line-height:1.5;
+  }
+
+  /* ════════ SLIDE 6 ════════ */
+  #c6 .s-body{ align-items:center; text-align:center; }
+  #c6 .warn{ font-size:90px; margin-bottom:18px; }
+  #c6 .title{ font-weight:700; font-size:60px; color:#fff; line-height:1.2; }
+  #c6 .multa-wrap{ margin-top:36px; margin-bottom:30px; }
+  #c6 .multa-label{
+    font-family:'Geist Mono', monospace;
+    font-size:21px; letter-spacing:0.05em;
+    color:#F59E0B;
+    margin-bottom:10px;
+  }
+  #c6 .multa-amount{
+    font-weight:700; font-size:108px; color:#F59E0B;
+    text-shadow:0 0 20px rgba(245,158,11,0.3);
+    line-height:1.05;
+    white-space:nowrap;
+  }
+  #c6 .body-tx{ font-weight:600; font-size:30px; color:#fff; margin-bottom:20px; }
+  #c6 .warn-box{
+    background:rgba(245,158,11,0.1);
+    border-left:4px solid #F59E0B;
+    padding:22px 26px;
+    font-weight:400; font-size:22px;
+    color:rgba(255,255,255,0.9);
+    line-height:1.5;
+    text-align:left;
+  }
+
+  /* ════════ SLIDE 7 ════════ */
+  #c7 .title{ font-weight:700; font-size:80px; color:#fff; line-height:1.15; }
+  #c7 .title.small{ font-size:68px; }
+  #c7 .p1{ font-weight:400; font-size:34px; color:rgba(255,255,255,0.9); margin-top:26px; }
+  #c7 .p2{ font-weight:600; font-size:42px; color:#fff; margin-top:6px; }
+  #c7 .p3{ font-weight:700; font-size:48px; color:#061A3A; margin-top:6px; }
+  #c7 .coin-row{ display:flex; gap:18px; margin-top:46px; opacity:0.6; }
+  #c7 .q1{ font-weight:400; font-size:34px; color:rgba(255,255,255,0.95); margin-top:40px; }
+  #c7 .q2{ font-weight:600; font-size:40px; color:#fff; margin-top:4px; }
+  #c7 .cta-btn{
+    margin-top:42px;
+    background:#061A3A;
+    border:2px solid #fff;
+    border-radius:16px;
+    padding:32px 48px;
+    width:fit-content;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  #c7 .cta-btn .l1{ font-weight:700; font-size:38px; color:#fff; }
+  #c7 .cta-btn .l2{
+    font-family:'Geist Mono', monospace;
+    font-size:24px; letter-spacing:0.04em;
+    color:rgba(255,255,255,0.8);
+  }
+  #c7 .foot-brand{ text-align:center; }
+  #c7 .foot-brand .l1{ font-weight:700; font-size:30px; color:#fff; }
+  #c7 .foot-brand .l2{ font-weight:400; font-size:19px; color:rgba(255,255,255,0.7); margin-top:4px; }
+</style>
+</head>
+<body>
+
+<div class="tip">Tip: usá Cmd+Shift+4 para capturar cada slide</div>
+
+<!-- ════════ SLIDE 1 — PORTADA ════════ -->
+<div class="slide" id="c1">
+  <div class="float-coin coin btc" style="width:100px;height:100px;font-size:48px;top:160px;right:90px;">₿</div>
+  <div class="float-coin coin eth" style="width:100px;height:100px;top:430px;left:50px;">
+    <svg width="34" height="54" viewBox="0 0 34 54"><polygon points="17,0 34,27 17,37 0,27" fill="#fff"/><polygon points="17,41 34,31 17,54 0,31" fill="rgba(255,255,255,0.6)"/></svg>
+  </div>
+  <div class="float-coin coin usdt" style="width:100px;height:100px;font-size:48px;bottom:120px;right:80px;">₮</div>
+
+  <div class="s-head">
+    <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+    <div class="s-label">ALERTA FISCAL · 01</div>
+  </div>
+
+  <div class="s-body">
+    <div class="pre">📢 NUEVO EN 2026</div>
+    <div class="title">La DNIT ahora</div>
+    <div class="title">controla tus</div>
+    <div class="title amber">CRIPTOMONEDAS</div>
+    <div class="coin-row">
+      <div class="coin btc" style="width:80px;height:80px;font-size:38px;">₿</div>
+      <div class="coin eth" style="width:80px;height:80px;">
+        <svg width="26" height="42" viewBox="0 0 26 42"><polygon points="13,0 26,21 13,29 0,21" fill="#fff"/><polygon points="13,32 26,24 13,42 0,24" fill="rgba(255,255,255,0.6)"/></svg>
+      </div>
+      <div class="coin usdt" style="width:80px;height:80px;font-size:38px;">₮</div>
+    </div>
+    <div class="sub">Lo que necesitás saber antes que sea tarde.</div>
+    <div class="cta">Deslizá →</div>
+  </div>
+
+  <div class="s-foot"><div class="folio">01/07</div></div>
+</div>
+
+<!-- ════════ SLIDE 2 — LA NOTICIA OFICIAL ════════ -->
+<div class="slide" id="c2">
+  <div class="s-head">
+    <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+    <div class="s-label">RESOLUCIÓN OFICIAL · 02</div>
+  </div>
+
+  <div class="s-body">
+    <div class="badge">📄 RESOLUCIÓN 47/2026</div>
+    <div class="t1">Desde MARZO</div>
+    <div class="t2">de este año,</div>
+    <div class="t3">la DNIT te obliga a</div>
+    <div class="t4">DECLARAR</div>
+    <div class="t5">tus operaciones cripto.</div>
+
+    <div class="coin-row">
+      <div class="coin btc" style="width:70px;height:70px;font-size:34px;">₿</div>
+      <div class="coin eth" style="width:70px;height:70px;">
+        <svg width="23" height="37" viewBox="0 0 23 37"><polygon points="11,0 23,18 11,25 0,18" fill="#fff"/><polygon points="11,28 23,21 11,37 0,21" fill="rgba(255,255,255,0.6)"/></svg>
+      </div>
+      <div class="coin usdt" style="width:70px;height:70px;font-size:34px;">₮</div>
+      <div class="bnb-outer" style="width:70px;height:70px;">
+        <div class="bnb-sq" style="width:48px;height:48px;">
+          <div class="bnb-sq-inner" style="width:18px;height:18px;"></div>
+        </div>
+      </div>
+      <div class="coin sol" style="width:70px;height:70px;">
+        <div class="sol-bar" style="width:32px;height:4px;"></div>
+        <div class="sol-bar" style="width:32px;height:4px;"></div>
+        <div class="sol-bar" style="width:32px;height:4px;"></div>
+      </div>
+    </div>
+    <div class="tags">Bitcoin · Ethereum · USDT · BNB · NFTs · Staking · Mining · y MÁS</div>
+  </div>
+
+  <div class="s-foot"><div class="folio">02/07</div></div>
+</div>
+
+<!-- ════════ SLIDE 3 — ¿A QUIÉN APLICA? ════════ -->
+<div class="slide navy-grad" id="c3">
+  <div class="s-head">
+    <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+    <div class="s-label">¿ESTO TE AFECTA? · 03</div>
+  </div>
+
+  <div class="s-body">
+    <div class="title">¿Esto</div>
+    <div class="title amber">te AFECTA?</div>
+    <div class="subtitle">Te aplica si...</div>
+    <div class="list">
+      <div class="item"><span class="ic">🛒</span><span class="tx">Comprás o vendés cripto</span></div>
+      <div class="item"><span class="ic">💸</span><span class="tx">Recibís pagos en cripto</span></div>
+      <div class="item"><span class="ic">📈</span><span class="tx">Hacés trading frecuente</span></div>
+      <div class="item"><span class="ic">💎</span><span class="tx">Tenés tenencia significativa</span></div>
+      <div class="item"><span class="ic">⛏️</span><span class="tx">Hacés mining, staking o lending</span></div>
+    </div>
+    <div class="hi-box">💡 Si te marcaste en alguna, este post es PARA VOS.</div>
+  </div>
+
+  <div class="s-foot"><div class="folio">03/07</div></div>
+</div>
+
+<!-- ════════ SLIDE 4 — QUÉ DECLARÁS ════════ -->
+<div class="slide" id="c4">
+  <div class="s-head">
+    <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+    <div class="s-label">QUÉ INFORMAR · 04</div>
+  </div>
+
+  <div class="s-body">
+    <div class="title">Tenés que</div>
+    <div class="title green">INFORMAR:</div>
+
+    <div class="grid">
+      <div class="card"><div class="ic">🔄</div><div class="lb">Compras y ventas</div></div>
+      <div class="card"><div class="ic">🔀</div><div class="lb">Intercambios entre cripto</div></div>
+      <div class="card"><div class="ic">📤</div><div class="lb">Transferencias entre billeteras</div></div>
+      <div class="card"><div class="ic">💳</div><div class="lb">Pagos con cripto</div></div>
+      <div class="card"><div class="ic">⚡</div><div class="lb">Mining y staking</div></div>
+      <div class="card"><div class="ic">🎁</div><div class="lb">Donaciones y herencias</div></div>
+    </div>
+
+    <div class="note">Incluye operaciones locales Y del exterior.</div>
+  </div>
+
+  <div class="s-foot"><div class="folio">04/07</div></div>
+</div>
+
+<!-- ════════ SLIDE 5 — CUÁNDO Y CÓMO ════════ -->
+<div class="slide navy-grad" id="c5">
+  <div class="s-head">
+    <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+    <div class="s-label">FECHAS CLAVE · 05</div>
+  </div>
+
+  <div class="s-body">
+    <div class="title">¿Cuándo</div>
+    <div class="title amber">presentar?</div>
+
+    <div class="timeline">
+      <div class="tl-node">
+        <div class="tl-circle green">31/12</div>
+        <div class="tl-label">Cierre fiscal</div>
+      </div>
+      <div class="tl-line"></div>
+      <div class="tl-node">
+        <div class="tl-circle amber">MAR</div>
+        <div class="tl-label">Vencimiento</div>
+      </div>
+    </div>
+
+    <div class="points">
+      <div class="point"><span class="ar">→</span><span class="tx">ANUAL, dentro del 3er mes tras cierre</span></div>
+      <div class="point"><span class="ar">→</span><span class="tx">Para cierre 31/12 → vence en MARZO del año siguiente</span></div>
+      <div class="point"><span class="ar">→</span><span class="tx">Primera declaración: ejercicio fiscal 2026</span></div>
+    </div>
+
+    <div class="info-box">📍 Se presenta vía Sistema Marangatu con tu clave de acceso.</div>
+  </div>
+
+  <div class="s-foot"><div class="folio">05/07</div></div>
+</div>
+
+<!-- ════════ SLIDE 6 — LA MULTA ════════ -->
+<div class="slide" id="c6">
+  <div class="s-head">
+    <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+    <div class="s-label">CONSECUENCIAS · 06</div>
+  </div>
+
+  <div class="s-body">
+    <div class="warn">⚠️</div>
+    <div class="title">Si NO presentás</div>
+    <div class="title">a tiempo:</div>
+
+    <div class="multa-wrap">
+      <div class="multa-label">MULTA POR CONTRAVENCIÓN</div>
+      <div class="multa-amount">Gs. 1.000.000</div>
+    </div>
+
+    <div class="body-tx">Y eso es solo la sanción inicial.</div>
+    <div class="warn-box">Si la DNIT detecta inconsistencias con tu IRP o IRE, vienen MÁS problemas: ajustes, intereses moratorios y posible fiscalización.</div>
+  </div>
+
+  <div class="s-foot"><div class="folio">06/07</div></div>
+</div>
+
+<!-- ════════ SLIDE 7 — CIERRE + CTA ════════ -->
+<div class="slide on-blue" id="c7">
+  <div class="s-head">
+    <div class="logo"><div class="dot"></div><span>naberol.</span></div>
+    <div class="s-label">CTA · 07</div>
+  </div>
+
+  <div class="s-body">
+    <div class="title">NO es un</div>
+    <div class="title small">impuesto nuevo.</div>
+    <div class="p1">Es una forma de la DNIT</div>
+    <div class="p2">de saber TODO</div>
+    <div class="p3">lo que hacés con cripto.</div>
+
+    <div class="coin-row">
+      <div class="coin btc" style="width:60px;height:60px;font-size:28px;">₿</div>
+      <div class="coin eth" style="width:60px;height:60px;">
+        <svg width="20" height="32" viewBox="0 0 20 32"><polygon points="10,0 20,16 10,22 0,16" fill="#fff"/><polygon points="10,25 20,19 10,32 0,19" fill="rgba(255,255,255,0.6)"/></svg>
+      </div>
+      <div class="coin usdt" style="width:60px;height:60px;font-size:28px;">₮</div>
+      <div class="bnb-outer" style="width:60px;height:60px;">
+        <div class="bnb-sq" style="width:42px;height:42px;">
+          <div class="bnb-sq-inner" style="width:16px;height:16px;"></div>
+        </div>
+      </div>
+      <div class="coin sol" style="width:60px;height:60px;">
+        <div class="sol-bar" style="width:28px;height:3px;"></div>
+        <div class="sol-bar" style="width:28px;height:3px;"></div>
+        <div class="sol-bar" style="width:28px;height:3px;"></div>
+      </div>
+      <div class="nft-badge" style="width:56px;height:56px;font-size:14px;">NFT</div>
+    </div>
+
+    <div class="q1">¿Operás con cripto</div>
+    <div class="q2">y no sabés cómo declararlas?</div>
+
+    <div class="cta-btn">
+      <div class="l1">ESCRIBIME ESTA SEMANA</div>
+      <div class="l2">@naberolconta</div>
+    </div>
+  </div>
+
+  <div class="foot-brand">
+    <div class="l1">naberol.</div>
+    <div class="l2">Claridad fiscal, con diseño.</div>
+  </div>
+
+  <div class="s-foot"><div class="folio">07/07</div></div>
+</div>
+
+</body>
+</html>

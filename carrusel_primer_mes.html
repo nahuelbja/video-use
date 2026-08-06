@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Carrusel — Tu primer mes (1080×1440)</title>
+<link href="fonts/fonts.css" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    margin:0; padding:40px 0;
+    width:100%;
+    background:#111;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:40px;
+  }
+  .tip{
+    font-family:'Geist Mono', monospace;
+    font-size:14px;
+    color:rgba(255,255,255,0.6);
+    letter-spacing:0.04em;
+  }
+  .slide{
+    width:1080px; height:1440px;
+    position:relative;
+    overflow:hidden;
+    padding:180px 90px;
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    background:#061A3A;
+    color:#fff;
+  }
+  .slide.blue{ background:#1E7AF5; }
+
+  /* ── typographic roles ── */
+  .hammer{ font-family:'Archivo Black', sans-serif; letter-spacing:-0.03em; line-height:0.9; }
+  .pf-it{ font-family:'Playfair Display', serif; font-style:italic; font-weight:400; }
+  .pf-it-b{ font-family:'Playfair Display', serif; font-style:italic; font-weight:700; }
+  .mono{ font-family:'Geist Mono', monospace; text-transform:uppercase; letter-spacing:0.18em; }
+  .body-p{ font-family:'Geist', sans-serif; font-weight:400; }
+
+  /* ── recurring frame ── */
+  .top-rule{
+    width:90px; height:3px; background:#1E7AF5;
+    position:relative; z-index:2; flex-shrink:0;
+  }
+  .blue .top-rule{ background:#061A3A; }
+  .eyebrow{
+    font-family:'Geist Mono', monospace;
+    text-transform:uppercase;
+    font-size:15px; letter-spacing:0.18em;
+    color:rgba(255,255,255,0.45);
+    margin-top:22px; margin-bottom:0;
+    position:relative; z-index:2; flex-shrink:0;
+  }
+  .blue .eyebrow{ color:rgba(6,26,58,0.5); }
+  .brand{
+    position:absolute; top:110px; right:90px;
+    display:flex; align-items:center; gap:9px;
+    z-index:3;
+  }
+  .brand .dot{ width:8px; height:8px; border-radius:50%; background:#1E7AF5; }
+  .brand span{ font-family:'Geist', sans-serif; font-weight:600; font-size:20px; color:#fff; }
+  .dotgrid{
+    position:absolute; bottom:110px; left:90px;
+    display:grid;
+    grid-template-columns:repeat(4, 3px);
+    grid-template-rows:repeat(3, 3px);
+    gap:14px;
+    z-index:2;
+  }
+  .dotgrid i{ width:3px; height:3px; border-radius:50%; background:rgba(30,122,245,0.35); display:block; }
+  .blue .dotgrid i{ background:rgba(6,26,58,0.3); }
+  .pageno{
+    position:absolute; bottom:108px; right:90px;
+    font-family:'Geist Mono', monospace;
+    font-size:14px; letter-spacing:0.2em;
+    color:rgba(255,255,255,0.3);
+    z-index:2;
+  }
+  .blue .pageno{ color:rgba(255,255,255,0.55); }
+  .ghost{
+    position:absolute;
+    font-family:'Archivo Black', sans-serif;
+    letter-spacing:-0.03em;
+    color:rgba(255,255,255,0.035);
+    line-height:0.8;
+    z-index:0; white-space:nowrap; pointer-events:none;
+  }
+  .blue .ghost{ color:rgba(6,26,58,0.12); }
+
+  .content{
+    flex:1; min-height:0;
+    position:relative; z-index:2;
+    display:flex; flex-direction:column;
+  }
+
+  .divider{
+    width:100%; height:1px;
+    background:rgba(255,255,255,0.12);
+    margin:40px 0;
+    flex-shrink:0;
+  }
+
+  .pull{
+    display:flex; align-items:baseline; gap:16px;
+  }
+  .pull .mark{ font-size:24px; flex-shrink:0; line-height:1; }
+  .pull .q{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:400;
+    font-size:34px; color:#fff; line-height:1.25;
+  }
+
+  /* list rows shared */
+  .rows{ display:flex; flex-direction:column; }
+  .rows .row{
+    display:flex; align-items:center; gap:22px;
+    padding:22px 0;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .rows .row:first-child{ border-top:1px solid rgba(255,255,255,0.08); }
+  .rows .rt{ font-family:'Geist', sans-serif; font-weight:600; font-size:34px; color:#fff; }
+  .badge-sq{
+    width:34px; height:34px; border-radius:6px;
+    border:1.5px solid #4F99FF;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Geist Mono', monospace; font-size:15px; color:#4F99FF;
+    flex-shrink:0;
+  }
+  .arrow{ font-family:'Geist Mono', monospace; font-size:22px; color:#4F99FF; width:26px; flex-shrink:0; }
+  .badge-ci{
+    width:30px; height:30px; border-radius:50%;
+    border:1.5px solid #00B37A;
+    display:flex; align-items:center; justify-content:center;
+    font-size:17px; color:#00B37A; flex-shrink:0;
+  }
+
+  /* ══ SLIDE 1 ══ */
+  #s1 .content{ justify-content:flex-end; }
+  #s1 .l1{ font-family:'Playfair Display', serif; font-style:italic; font-weight:400; font-size:64px; color:rgba(255,255,255,0.75); line-height:1.1; }
+  #s1 .l2{ font-family:'Archivo Black', sans-serif; letter-spacing:-0.03em; font-size:170px; color:#fff; line-height:0.9; }
+  #s1 .l3{ font-family:'Geist', sans-serif; font-weight:400; font-size:40px; color:rgba(255,255,255,0.8); margin-top:50px; }
+  #s1 .l4{ font-family:'Playfair Display', serif; font-style:italic; font-weight:700; font-size:52px; color:#fff; line-height:1.15; }
+  #s1 .swipe{ font-family:'Geist Mono', monospace; text-transform:uppercase; letter-spacing:0.18em; font-size:18px; color:#4F99FF; margin-top:40px; }
+
+  /* ══ SLIDES 2-6 ══ */
+  .act .hl-it{ font-family:'Playfair Display', serif; font-style:italic; font-weight:400; color:rgba(255,255,255,0.7); line-height:1.05; display:block; }
+  .act .hl-hammer{ font-family:'Archivo Black', sans-serif; letter-spacing:-0.03em; color:#fff; line-height:0.9; display:block; margin-top:8px; }
+
+  #s2 .hl-it{ font-size:72px; }
+  #s2 .hl-hammer{ font-size:150px; }
+  #s2 .body-copy{ font-family:'Geist', sans-serif; font-weight:400; font-size:32px; color:rgba(255,255,255,0.8); line-height:1.55; max-width:800px; }
+
+  #s3 .hl-it{ font-size:60px; }
+  #s3 .hl-hammer{ font-size:110px; }
+
+  #s4 .hl-it{ font-size:60px; }
+  #s4 .hl-hammer{ font-size:200px; color:#E5484D; }
+  #s4 .body-copy{ font-family:'Geist', sans-serif; font-weight:400; font-size:32px; color:rgba(255,255,255,0.8); line-height:1.55; max-width:800px; }
+
+  #s5 .hl-it{ font-size:60px; }
+  #s5 .hl-hammer{ font-size:150px; }
+
+  #s6 .hl-it{ font-size:60px; }
+  #s6 .hl-hammer{ font-size:240px; color:#00B37A; line-height:0.85; }
+
+  /* push pull-quote to bottom of act slides */
+  .act .content .filler{ margin-top:auto; }
+
+  /* ══ SLIDE 7 ══ */
+  #s7 .content{ justify-content:center; }
+  #s7 .l1{ font-family:'Playfair Display', serif; font-style:italic; font-weight:400; font-size:56px; color:rgba(255,255,255,0.9); line-height:1.1; }
+  #s7 .l2{ font-family:'Archivo Black', sans-serif; letter-spacing:-0.03em; font-size:100px; color:#fff; line-height:0.95; }
+  #s7 .l3{ font-family:'Archivo Black', sans-serif; letter-spacing:-0.03em; font-size:100px; color:#061A3A; line-height:0.95; }
+  #s7 .q1{ font-family:'Playfair Display', serif; font-style:italic; font-weight:700; font-size:46px; color:#fff; margin-top:60px; }
+  #s7 .escribime{ font-family:'Archivo Black', sans-serif; letter-spacing:-0.03em; font-size:90px; color:#fff; line-height:0.95; margin-top:36px; }
+  #s7 .handle{ font-family:'Geist Mono', monospace; font-size:24px; letter-spacing:0.08em; color:rgba(255,255,255,0.85); margin-top:14px; }
+  #s7 .brand-close{ position:absolute; left:90px; bottom:150px; z-index:2; }
+  #s7 .brand-close .b1{ font-family:'Geist', sans-serif; font-weight:600; font-size:22px; color:#fff; }
+  #s7 .brand-close .b2{ font-family:'Playfair Display', serif; font-style:italic; font-size:18px; color:rgba(255,255,255,0.75); margin-top:5px; }
+</style>
+</head>
+<body>
+
+<div class="tip">Formato 1080×1440 · zona segura 180px arriba y abajo</div>
+
+<!-- ══════ SLIDE 1 — PORTADA ══════ -->
+<div class="slide" id="s1">
+  <div class="ghost" style="top:34%; right:-120px; font-size:420px;">MES</div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+  <div class="top-rule"></div>
+  <div class="eyebrow">SIN MISTERIOS · CÓMO TRABAJAMOS</div>
+
+  <div class="content">
+    <div class="l1">Tu primer mes</div>
+    <div class="l2">CONMIGO</div>
+    <div class="l3">Qué pasa exactamente</div>
+    <div class="l4">cuando me escribís.</div>
+    <div class="swipe">Deslizá →</div>
+  </div>
+
+  <div class="dotgrid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="pageno">01/07</div>
+</div>
+
+<!-- ══════ SLIDE 2 — LA PRIMERA CHARLA ══════ -->
+<div class="slide act" id="s2">
+  <div class="ghost" style="top:38%; left:-90px; font-size:360px;">HOLA</div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+  <div class="top-rule"></div>
+  <div class="eyebrow">ANTES DE EMPEZAR</div>
+
+  <div class="content">
+    <div class="headline">
+      <span class="hl-it">Primero</span>
+      <span class="hl-hammer">HABLAMOS.</span>
+    </div>
+    <div class="divider"></div>
+    <div class="body-copy">Me contás en qué estás: qué vendés, hace cuánto, si tenés RUC, si estás al día. Yo te digo qué necesitás — y qué no necesitás todavía.</div>
+    <div class="filler"></div>
+    <div class="pull"><span class="mark" style="color:#4F99FF;">✦</span><span class="q">Sin tecnicismos y sin compromiso.</span></div>
+  </div>
+
+  <div class="dotgrid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="pageno">02/07</div>
+</div>
+
+<!-- ══════ SLIDE 3 — SEMANA 1 · DIAGNÓSTICO ══════ -->
+<div class="slide act" id="s3">
+  <div class="ghost" style="bottom:-100px; right:-60px; font-size:420px;">01</div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+  <div class="top-rule"></div>
+  <div class="eyebrow">SEMANA 01 · DIAGNÓSTICO</div>
+
+  <div class="content">
+    <div class="headline">
+      <span class="hl-it">Reviso dónde</span>
+      <span class="hl-hammer">ESTÁS PARADO.</span>
+    </div>
+    <div class="divider"></div>
+    <div class="rows">
+      <div class="row"><span class="badge-sq">01</span><span class="rt">Estado real de tu RUC</span></div>
+      <div class="row"><span class="badge-sq">02</span><span class="rt">Obligaciones vigentes</span></div>
+      <div class="row"><span class="badge-sq">03</span><span class="rt">Declaraciones pendientes</span></div>
+      <div class="row"><span class="badge-sq">04</span><span class="rt">Timbrado y régimen</span></div>
+    </div>
+    <div class="filler"></div>
+    <div class="pull"><span class="mark" style="color:#4F99FF;">✦</span><span class="q">Nada de suposiciones. Datos.</span></div>
+  </div>
+
+  <div class="dotgrid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="pageno">03/07</div>
+</div>
+
+<!-- ══════ SLIDE 4 — SEMANA 2 · REGULARIZACIÓN ══════ -->
+<div class="slide act" id="s4">
+  <div class="ghost" style="top:40%; right:-100px; font-size:300px;">AL DÍA</div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+  <div class="top-rule"></div>
+  <div class="eyebrow">SEMANA 02 · REGULARIZACIÓN</div>
+
+  <div class="content">
+    <div class="headline">
+      <span class="hl-it">Salimos del</span>
+      <span class="hl-hammer">ROJO.</span>
+    </div>
+    <div class="divider"></div>
+    <div class="body-copy">Presentamos lo atrasado, corregimos lo que quedó mal cargado y ordenamos tu situación con la DNIT.</div>
+    <div class="filler"></div>
+    <div class="pull"><span class="mark" style="color:#F59E0B;">✦</span><span class="q">Se hace una vez. Después no vuelve a pasar.</span></div>
+  </div>
+
+  <div class="dotgrid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="pageno">04/07</div>
+</div>
+
+<!-- ══════ SLIDE 5 — SEMANA 3 · EL SISTEMA ══════ -->
+<div class="slide act" id="s5">
+  <div class="ghost" style="bottom:-60px; left:-70px; font-size:340px;">ORDEN</div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+  <div class="top-rule"></div>
+  <div class="eyebrow">SEMANA 03 · EL SISTEMA</div>
+
+  <div class="content">
+    <div class="headline">
+      <span class="hl-it">Armamos tu</span>
+      <span class="hl-hammer">RUTINA.</span>
+    </div>
+    <div class="divider"></div>
+    <div class="rows">
+      <div class="row"><span class="arrow">→</span><span class="rt">Dónde me mandás tus comprobantes</span></div>
+      <div class="row"><span class="arrow">→</span><span class="rt">Cada cuánto lo hacemos</span></div>
+      <div class="row"><span class="arrow">→</span><span class="rt">Tu calendario de vencimientos</span></div>
+    </div>
+    <div class="filler"></div>
+    <div class="pull"><span class="mark" style="color:#4F99FF;">✦</span><span class="q">Diez minutos tuyos al mes. Nada más.</span></div>
+  </div>
+
+  <div class="dotgrid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="pageno">05/07</div>
+</div>
+
+<!-- ══════ SLIDE 6 — SEMANA 4 · TUS NÚMEROS ══════ -->
+<div class="slide act" id="s6">
+  <div class="ghost" style="top:36%; right:-90px; font-size:340px;">CLARO</div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+  <div class="top-rule"></div>
+  <div class="eyebrow">SEMANA 04 · TUS NÚMEROS</div>
+
+  <div class="content">
+    <div class="headline">
+      <span class="hl-it">Y por fin,</span>
+      <span class="hl-hammer">VES.</span>
+    </div>
+    <div class="divider"></div>
+    <div class="rows">
+      <div class="row"><span class="badge-ci">✓</span><span class="rt">Cuánto facturaste</span></div>
+      <div class="row"><span class="badge-ci">✓</span><span class="rt">Cuánto te quedó de verdad</span></div>
+      <div class="row"><span class="badge-ci">✓</span><span class="rt">Qué se viene el mes que entra</span></div>
+    </div>
+    <div class="filler"></div>
+    <div class="pull"><span class="mark" style="color:#00B37A;">✦</span><span class="q">En un reporte que se entiende sin ser contador.</span></div>
+  </div>
+
+  <div class="dotgrid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="pageno">06/07</div>
+</div>
+
+<!-- ══════ SLIDE 7 — CIERRE + CTA ══════ -->
+<div class="slide blue" id="s7">
+  <div class="ghost" style="bottom:-90px; right:-40px; font-size:300px;">LISTO.</div>
+  <div class="brand"><div class="dot"></div><span>naberol.</span></div>
+  <div class="top-rule"></div>
+  <div class="eyebrow">EMPEZAMOS CUANDO QUIERAS</div>
+
+  <div class="content">
+    <div class="l1">Después de eso,</div>
+    <div class="l2">YA NO PENSÁS</div>
+    <div class="l3">MÁS EN ESTO.</div>
+    <div class="q1">¿Arrancamos este mes?</div>
+    <div class="escribime">Escribime.</div>
+    <div class="handle">@naberolconta</div>
+  </div>
+
+  <div class="brand-close">
+    <div class="b1">naberol.</div>
+    <div class="b2">Claridad fiscal, con diseño.</div>
+  </div>
+  <div class="dotgrid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="pageno">07/07</div>
+</div>
+
+</body>
+</html>

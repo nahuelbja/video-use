@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carrusel — Calendario Fiscal 2026 · naberol.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink:    #061A3A;
+      --navy:   #0A4BA6;
+      --blue:   #1E7AF5;
+      --bluel:  #4F99FF;
+      --white:  #FFFFFF;
+      --green:  #00B37A;
+      --amber:  #F59E0B;
+      --purple: #7C5CFF;
+      --muted:  rgba(255,255,255,0.7);
+      --subtle: rgba(255,255,255,0.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      margin: 0; padding: 40px 0;
+      width: 100%;
+      background: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .tip {
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.04em;
+      background: rgba(255,255,255,0.07);
+      padding: 10px 24px;
+      border-radius: 8px;
+    }
+
+    .slide {
+      width: 1080px;
+      height: 1350px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 80px;
+      flex-shrink: 0;
+    }
+
+    /* ── LOGO ── */
+    .logo {
+      position: absolute;
+      top: 80px; left: 80px;
+      display: flex; align-items: center; gap: 9px;
+      z-index: 10;
+    }
+    .logo-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+    }
+    .logo-text {
+      font-weight: 700; font-size: 22px;
+      color: var(--white); line-height: 1;
+    }
+
+    /* ── TOP TAG ── */
+    .tag {
+      position: absolute;
+      top: 80px; right: 80px;
+      font-family: 'Courier New', monospace;
+      font-weight: 500;
+      font-size: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      z-index: 10;
+    }
+
+    /* ── SLIDE NUM ── */
+    .num {
+      position: absolute;
+      bottom: 80px; right: 80px;
+      font-family: 'Courier New', monospace;
+      font-weight: 500;
+      font-size: 16px;
+      color: var(--subtle);
+      letter-spacing: 0.04em;
+      z-index: 10;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 80px;
+      padding-top: 160px;
+      z-index: 5;
+    }
+
+    /* spacers */
+    .sp-30 { height: 30px; }
+    .sp-40 { height: 40px; }
+    .sp-50 { height: 50px; }
+    .sp-70 { height: 70px; }
+
+    /* ── SLIDE 1 ── */
+    #s1 { background: var(--ink); }
+    #s1 .tag { color: rgba(255,255,255,0.5); font-size: 14px; }
+    #s1 .year {
+      font-family: 'Courier New', monospace;
+      font-weight: 500;
+      font-size: 40px;
+      color: var(--bluel);
+      letter-spacing: 0.1em;
+      margin: 0 0 16px 0;
+    }
+    #s1 .t-cal     { font-weight: 700; font-size: 110px; color: var(--white); line-height: 1.0; margin: 0; }
+    #s1 .t-fiscal  { font-weight: 700; font-size: 160px; color: var(--amber); line-height: 0.95; margin: 0 0 14px 0; }
+    #s1 .t-emp     { font-weight: 600; font-size: 56px;  color: var(--white); line-height: 1.05; margin: 0; }
+    #s1 .t-py      { font-weight: 700; font-size: 60px;  color: var(--green); line-height: 1.05; margin: 0; }
+    #s1 .bottom {
+      position: absolute;
+      bottom: 100px; left: 80px; right: 80px;
+      z-index: 5;
+    }
+    #s1 .subtitle  { font-weight: 400; font-size: 30px; color: var(--muted); margin: 0 0 24px 0; }
+    #s1 .pinbox {
+      display: inline-block;
+      border: 1.5px solid var(--blue);
+      background: rgba(30,122,245,0.10);
+      border-radius: 16px;
+      padding: 20px 30px;
+      font-weight: 600;
+      font-size: 24px;
+      color: var(--white);
+    }
+
+    /* ── SLIDE 2 ── */
+    #s2 { background: var(--ink); }
+    #s2 .tag { color: var(--bluel); }
+    #s2 .lbl {
+      font-family: 'Courier New', monospace;
+      font-weight: 500; font-size: 18px;
+      color: var(--amber);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0 0 16px 0;
+    }
+    #s2 .t-white  { font-weight: 700; font-size: 64px; color: var(--white); line-height: 1.0; margin: 0; }
+    #s2 .t-amber  { font-weight: 700; font-size: 80px; color: var(--amber); line-height: 1.0; margin: 0; }
+    #s2 .perp-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 30px;
+    }
+    #s2 .perp-table th, #s2 .perp-table td {
+      padding: 11px 0;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+    }
+    #s2 .perp-table th {
+      font-family: 'Courier New', monospace;
+      font-weight: 500;
+      font-size: 18px;
+      color: var(--bluel);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: rgba(30,122,245,0.15);
+    }
+    #s2 .perp-table td {
+      font-weight: 700;
+      font-size: 28px;
+      color: var(--white);
+    }
+    #s2 .perp-table tr:nth-child(even) td {
+      background: rgba(255,255,255,0.03);
+    }
+    #s2 .perp-note {
+      font-family: 'Courier New', monospace;
+      font-style: italic;
+      font-size: 18px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 20px;
+    }
+
+    /* ── SLIDE 3 ── */
+    #s3 { background: linear-gradient(180deg, var(--navy) 0%, var(--ink) 100%); }
+    #s3 .tag { color: var(--bluel); }
+    .badge {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 16px 32px;
+      font-weight: 700;
+      font-size: 36px;
+      line-height: 1;
+      width: fit-content;
+    }
+    .badge.green  { background: var(--green);  color: var(--white); }
+    .badge.amber  { background: var(--amber);  color: var(--ink); }
+    .badge.purple { background: var(--purple); color: var(--white); }
+
+    #s3 .t-white { font-weight: 700; font-size: 72px; color: var(--white); line-height: 1.05; margin: 0; }
+    #s3 .t-green { font-weight: 700; font-size: 72px; color: var(--green); line-height: 1.05; margin: 0; }
+
+    .check-list { display: flex; flex-direction: column; gap: 18px; }
+    .check-row {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .check-row::before {
+      content: "✓";
+      color: var(--green);
+      font-weight: 700;
+      font-size: 30px;
+      width: 32px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .check-row.amber::before { color: var(--amber); }
+    .check-text {
+      font-weight: 600;
+      font-size: 32px;
+      color: var(--white);
+      line-height: 1.25;
+    }
+
+    #s3 .embox-green {
+      border-radius: 14px;
+      background: rgba(0,179,122,0.15);
+      border: 1px solid var(--green);
+      padding: 24px;
+      font-family: 'Courier New', monospace;
+      font-size: 22px;
+      color: var(--white);
+      line-height: 1.4;
+    }
+
+    /* ── SLIDE 4 ── */
+    #s4 { background: var(--ink); }
+    #s4 .tag { color: var(--bluel); }
+    #s4 .t-white { font-weight: 700; font-size: 80px; color: var(--white); line-height: 1.0; margin: 0; }
+    .timeline-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      padding: 16px 0;
+    }
+    .timeline-wrap::before {
+      content: "";
+      position: absolute;
+      left: 80px; right: 80px;
+      top: 50%;
+      height: 0;
+      border-top: 2px dashed rgba(255,255,255,0.3);
+      z-index: 0;
+    }
+    .tl-marker {
+      position: relative;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 14px;
+      z-index: 2;
+    }
+    .tl-dot {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--bluel);
+    }
+    .tl-dot.amber { background: var(--amber); }
+    .tl-lbl {
+      font-family: 'Courier New', monospace;
+      font-weight: 500;
+      font-size: 18px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .tl-lbl.blue  { color: var(--bluel); }
+    .tl-lbl.amber { color: var(--amber); }
+    .tl-val {
+      font-weight: 700; font-size: 36px;
+      color: var(--white);
+      line-height: 1;
+    }
+    .tl-val.amber { color: var(--amber); }
+
+    #s4 .info-q {
+      font-weight: 600; font-size: 28px;
+      color: rgba(255,255,255,0.7);
+      margin: 0 0 8px 0;
+    }
+    #s4 .info-a {
+      font-weight: 600; font-size: 32px;
+      color: var(--white);
+      line-height: 1.25;
+      margin: 0;
+    }
+
+    #s4 .rate-box {
+      border-radius: 14px;
+      background: rgba(245,158,11,0.12);
+      border: 1px solid var(--amber);
+      padding: 24px;
+    }
+    #s4 .rate-lbl {
+      font-family: 'Courier New', monospace;
+      font-weight: 500;
+      font-size: 18px;
+      color: var(--amber);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    #s4 .rate-vals {
+      font-weight: 700;
+      font-size: 56px;
+      color: var(--white);
+      line-height: 1.0;
+      margin-bottom: 10px;
+    }
+    #s4 .rate-vals span.sep { color: var(--amber); }
+    #s4 .rate-foot {
+      font-weight: 400;
+      font-size: 20px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ── SLIDE 5 ── */
+    #s5 { background: linear-gradient(180deg, var(--navy) 0%, var(--ink) 100%); }
+    #s5 .tag { color: var(--bluel); }
+    #s5 .t-white  { font-weight: 700; font-size: 72px;  color: var(--white);  line-height: 1.05; margin: 0; }
+    #s5 .t-purple { font-weight: 700; font-size: 100px; color: var(--purple); line-height: 1.0;  margin: 0; }
+
+    .reg-list { display: flex; flex-direction: column; gap: 18px; }
+    .reg-card {
+      background: rgba(255,255,255,0.04);
+      padding: 20px 24px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+    .reg-card.green  { border-left: 4px solid var(--green); }
+    .reg-card.amber  { border-left: 4px solid var(--amber); }
+    .reg-card.purple { border-left: 4px solid var(--purple); }
+
+    .reg-left { display: flex; flex-direction: column; gap: 4px; }
+    .reg-lbl {
+      font-family: 'Courier New', monospace;
+      font-weight: 500;
+      font-size: 16px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .reg-lbl.green  { color: var(--green); }
+    .reg-lbl.amber  { color: var(--amber); }
+    .reg-lbl.purple { color: var(--purple); }
+    .reg-title {
+      font-weight: 700;
+      font-size: 36px;
+      color: var(--white);
+      line-height: 1;
+    }
+    .reg-vence {
+      font-weight: 600;
+      font-size: 22px;
+      color: rgba(255,255,255,0.85);
+      text-align: right;
+      line-height: 1.25;
+      max-width: 320px;
+    }
+
+    #s5 .note {
+      font-family: 'Courier New', monospace;
+      font-size: 20px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ── SLIDE 6 ── */
+    #s6 { background: var(--ink); }
+    #s6 .tag { color: var(--bluel); }
+    #s6 .t-white { font-weight: 700; font-size: 76px; color: var(--white); line-height: 1.0; margin: 0; }
+    #s6 .t-amber { font-weight: 700; font-size: 76px; color: var(--amber); line-height: 1.0; margin: 0; }
+
+    .obl-list { display: flex; flex-direction: column; gap: 18px; }
+    .obl-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .obl-icon  {
+      font-size: 32px;
+      width: 44px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .obl-mid {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .obl-text {
+      font-weight: 600;
+      font-size: 30px;
+      color: var(--white);
+      line-height: 1.2;
+    }
+    .obl-sub {
+      font-weight: 400;
+      font-size: 18px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.2;
+    }
+    .obl-tag {
+      font-family: 'Courier New', monospace;
+      font-weight: 500;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 7px 14px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .obl-tag.green  { background: rgba(0,179,122,0.2);  color: var(--green); }
+    .obl-tag.amber  { background: rgba(245,158,11,0.2); color: var(--amber); }
+    .obl-tag.purple { background: rgba(124,92,255,0.2); color: var(--purple); }
+    .obl-tag.blue   { background: var(--blue);          color: var(--white); }
+
+    #s6 .embox-blue {
+      border-radius: 14px;
+      background: rgba(30,122,245,0.12);
+      border: 1px solid var(--blue);
+      padding: 20px 24px;
+      font-family: 'Courier New', monospace;
+      font-size: 20px;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.5;
+    }
+
+    /* ── SLIDE 7 ── */
+    #s7 { background: var(--blue); }
+    #s7 .tag { color: rgba(255,255,255,0.6); }
+    #s7 .num { color: rgba(255,255,255,0.6); }
+    #s7 .content { align-items: center; text-align: center; }
+    #s7 .t-white-76 { font-weight: 700; font-size: 76px; color: var(--white); line-height: 1.0; margin: 0; }
+    #s7 .t-ink-88   { font-weight: 700; font-size: 88px; color: var(--ink);   line-height: 1.0; margin: 6px 0 0 0; }
+    #s7 .sub-reg    { font-weight: 400; font-size: 40px; color: rgba(255,255,255,0.9); margin: 0; }
+    #s7 .sub-bold   { font-weight: 700; font-size: 56px; color: var(--white); margin: 6px 0 0 0; }
+    #s7 .body-reg   { font-weight: 400; font-size: 36px; color: rgba(255,255,255,0.9); margin: 0; }
+    #s7 .body-semi  { font-weight: 600; font-size: 40px; color: var(--white); margin: 8px 0 0 0; }
+
+    #s7 .cta-box {
+      background: var(--ink);
+      border: 2px solid var(--white);
+      border-radius: 16px;
+      padding: 36px 56px;
+      display: flex; flex-direction: column; align-items: center;
+      width: fit-content;
+    }
+    #s7 .cta-big { font-weight: 700; font-size: 48px; color: var(--white); line-height: 1; margin: 0 0 10px 0; }
+    #s7 .cta-mono {
+      font-family: 'Courier New', monospace;
+      font-weight: 500; font-size: 26px;
+      color: rgba(255,255,255,0.8); letter-spacing: 0.04em;
+      margin: 0;
+    }
+
+    #s7 .brand-wrap {
+      position: absolute;
+      bottom: 95px; left: 0; right: 0;
+      text-align: center; z-index: 5;
+    }
+    #s7 .brand-name { font-weight: 700; font-size: 32px; color: var(--white); margin: 0 0 6px 0; }
+    #s7 .brand-tag  { font-weight: 400; font-size: 20px; color: rgba(255,255,255,0.7); margin: 0; }
+  </style>
+</head>
+<body>
+
+  <div class="tip">TIP: Usá Cmd+Shift+4 para capturar cada slide individualmente</div>
+
+  <!-- ════════════════════════════════════════
+       SLIDE 1 — PORTADA
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s1">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+    <div class="tag" style="font-family:'Courier New',monospace;font-size:14px;letter-spacing:0.04em;text-transform:uppercase;font-weight:500;">
+      CALENDARIO FISCAL · 01
+    </div>
+
+    <div class="content">
+      <p class="year">2026</p>
+      <p class="t-cal">Calendario</p>
+      <p class="t-fiscal">FISCAL</p>
+      <p class="t-emp">del emprendedor</p>
+      <p class="t-py">paraguayo 🇵🇾</p>
+    </div>
+
+    <div class="bottom">
+      <p class="subtitle">Todo lo que necesitás saber este año.</p>
+      <div class="pinbox">📌 Guardalo. Te va a servir todo el año.</div>
+    </div>
+
+    <div class="num">01/07</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SLIDE 2 — CALENDARIO PERPETUO
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s2">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+    <div class="tag">LA BASE · 02</div>
+
+    <div class="content">
+      <p class="lbl">EMPEZAMOS POR LO ESENCIAL</p>
+      <p class="t-white">Tu fecha de</p>
+      <p class="t-white">vencimiento depende</p>
+      <p class="t-white">del último dígito</p>
+      <p class="t-amber">de tu RUC.</p>
+
+      <table class="perp-table">
+        <tr>
+          <th>ÚLTIMO DÍGITO</th>
+          <th>DÍA DE VENCIMIENTO</th>
+        </tr>
+        <tr><td>0</td><td>7</td></tr>
+        <tr><td>1</td><td>9</td></tr>
+        <tr><td>2</td><td>11</td></tr>
+        <tr><td>3</td><td>13</td></tr>
+        <tr><td>4</td><td>15</td></tr>
+        <tr><td>5</td><td>17</td></tr>
+        <tr><td>6</td><td>19</td></tr>
+        <tr><td>7</td><td>21</td></tr>
+        <tr><td>8</td><td>23</td></tr>
+        <tr><td>9</td><td>25</td></tr>
+      </table>
+
+      <p class="perp-note">⚠️ Si cae día inhábil, se pasa al siguiente día hábil.</p>
+    </div>
+
+    <div class="num">02/07</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SLIDE 3 — IVA MENSUAL
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s3">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+    <div class="tag">OBLIGACIÓN MENSUAL · 03</div>
+
+    <div class="content">
+      <div class="badge green">IVA</div>
+
+      <div class="sp-30"></div>
+
+      <p class="t-white">Una declaración</p>
+      <p class="t-green">todos los meses.</p>
+
+      <div class="sp-50"></div>
+
+      <div class="check-list">
+        <div class="check-row"><span class="check-text">Vence al mes siguiente del período fiscal.</span></div>
+        <div class="check-row"><span class="check-text">Según tu calendario perpetuo (último dígito RUC).</span></div>
+        <div class="check-row"><span class="check-text">Aplica si sos contribuyente del IVA general.</span></div>
+      </div>
+
+      <div class="sp-40"></div>
+
+      <div class="embox-green">
+        💡 Ejemplo: el IVA de abril vence en mayo, según tu dígito RUC.
+      </div>
+    </div>
+
+    <div class="num">03/07</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SLIDE 4 — IRP ANUAL
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s4">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+    <div class="tag">OBLIGACIÓN ANUAL · 04</div>
+
+    <div class="content">
+      <div class="badge amber">IRP</div>
+
+      <div class="sp-30"></div>
+
+      <p class="t-white">Una vez al año.</p>
+
+      <div class="sp-40"></div>
+
+      <div class="timeline-wrap">
+        <div class="tl-marker">
+          <span class="tl-lbl blue">Ejercicio fiscal</span>
+          <div class="tl-dot"></div>
+          <span class="tl-val">ENE → DIC</span>
+        </div>
+        <div class="tl-marker">
+          <span class="tl-lbl amber">Vencimiento</span>
+          <div class="tl-dot amber"></div>
+          <span class="tl-val amber">MARZO</span>
+        </div>
+      </div>
+
+      <div class="sp-50"></div>
+
+      <p class="info-q">¿A quién aplica?</p>
+      <p class="info-a">Rentas de servicios personales y ganancias de capital.</p>
+
+      <div class="sp-30"></div>
+
+      <div class="rate-box">
+        <div class="rate-lbl">TASAS APLICABLES</div>
+        <div class="rate-vals">8% <span class="sep">·</span> 9% <span class="sep">·</span> 10%</div>
+        <div class="rate-foot">según escala de ingresos</div>
+      </div>
+    </div>
+
+    <div class="num">04/07</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SLIDE 5 — IRE SEGÚN RÉGIMEN
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s5">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+    <div class="tag">DEPENDE DE TU RÉGIMEN · 05</div>
+
+    <div class="content">
+      <div class="badge purple">IRE</div>
+
+      <div class="sp-30"></div>
+
+      <p class="t-white">Depende de tu</p>
+      <p class="t-purple">RÉGIMEN.</p>
+
+      <div class="sp-50"></div>
+
+      <div class="reg-list">
+        <div class="reg-card amber">
+          <div class="reg-left">
+            <span class="reg-lbl amber">MEDIANAS EMPRESAS</span>
+            <span class="reg-title">SIMPLE</span>
+          </div>
+          <span class="reg-vence">Hasta el 3er mes tras cierre</span>
+        </div>
+        <div class="reg-card purple">
+          <div class="reg-left">
+            <span class="reg-lbl purple">GRANDES EMPRESAS</span>
+            <span class="reg-title">GENERAL</span>
+          </div>
+          <span class="reg-vence">Hasta el 4to mes tras cierre</span>
+        </div>
+      </div>
+
+      <div class="sp-30"></div>
+
+      <p class="note">📅 Cierre estándar de ejercicio: 31 de diciembre</p>
+    </div>
+
+    <div class="num">05/07</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SLIDE 6 — OTRAS OBLIGACIONES
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s6">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+    <div class="tag">NO TE OLVIDES · 06</div>
+
+    <div class="content">
+      <p class="t-white">No olvides</p>
+      <p class="t-amber">estas TAMBIÉN:</p>
+
+      <div class="sp-40"></div>
+
+      <div class="obl-list">
+        <div class="obl-row">
+          <span class="obl-icon">🔄</span>
+          <div class="obl-mid">
+            <span class="obl-text">Retenciones IVA/Renta</span>
+          </div>
+          <span class="obl-tag green">MENSUAL</span>
+        </div>
+
+        <div class="obl-row">
+          <span class="obl-icon">💰</span>
+          <div class="obl-mid">
+            <span class="obl-text">IDU — Dividendos y Utilidades</span>
+          </div>
+          <span class="obl-tag green">MENSUAL si aplica</span>
+        </div>
+
+        <div class="obl-row">
+          <span class="obl-icon">👥</span>
+          <div class="obl-mid">
+            <span class="obl-text">Nómina salarial</span>
+            <span class="obl-sub">(medianas y grandes)</span>
+          </div>
+          <span class="obl-tag amber">FEBRERO</span>
+        </div>
+
+        <div class="obl-row">
+          <span class="obl-icon">📊</span>
+          <div class="obl-mid">
+            <span class="obl-text">Anticipos IRE</span>
+            <span class="obl-sub">(trimestrales)</span>
+          </div>
+          <span class="obl-tag purple">4 CUOTAS</span>
+        </div>
+
+        <div class="obl-row">
+          <span class="obl-icon">📦</span>
+          <div class="obl-mid">
+            <span class="obl-text">Declaración Aduanera Digital</span>
+            <span class="obl-sub">(obligatoria desde enero)</span>
+          </div>
+          <span class="obl-tag blue">NUEVO 2026</span>
+        </div>
+      </div>
+
+      <div class="sp-30"></div>
+
+      <div class="embox-blue">
+        ⚡ Verificá siempre el calendario oficial DNIT cada mes — pueden haber ajustes puntuales.
+      </div>
+    </div>
+
+    <div class="num">06/07</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       SLIDE 7 — CIERRE + CTA
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s7">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">naberol.</span>
+    </div>
+    <div class="tag">CTA · 07</div>
+
+    <div class="content">
+      <p class="t-white-76">Saber las fechas</p>
+      <p class="t-white-76">es la MITAD</p>
+      <p class="t-ink-88">del trabajo.</p>
+
+      <div class="sp-50"></div>
+
+      <p class="sub-reg">Cumplirlas a tiempo,</p>
+      <p class="sub-bold">la otra MITAD.</p>
+
+      <div class="sp-70"></div>
+
+      <p class="body-reg">¿Querés que te avise</p>
+      <p class="body-semi">antes de cada vencimiento?</p>
+
+      <div class="sp-50"></div>
+
+      <div class="cta-box">
+        <p class="cta-big">ESCRIBIME</p>
+        <p class="cta-mono">@naberolconta</p>
+      </div>
+    </div>
+
+    <div class="brand-wrap">
+      <p class="brand-name">naberol.</p>
+      <p class="brand-tag">Claridad fiscal, con diseño.</p>
+    </div>
+
+    <div class="num">07/07</div>
+  </div>
+
+</body>
+</html>

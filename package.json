@@ -1,0 +1,20 @@
+{
+  "name": "video-use",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">   <img src=\"static/video-use-banner.png\" alt=\"video-use\" width=\"100%\"> </p>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:35151/git/nahuelbja/video-use"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^25.4.0",
+    "sharp": "^0.34.5"
+  }
+}

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>El costo invisible — naberol.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#061A3A;
+    --blue:#1E7AF5;
+    --blue-light:#4F99FF;
+    --green:#00B37A;
+    --amber:#F59E0B;
+    --red:#EF4444;
+    --muted:rgba(255,255,255,0.5);
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{
+    width:100%;
+    background:#1a1a1a;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:40px;
+    padding:40px 0;
+    font-family:'Geist', sans-serif;
+  }
+  .tip{
+    font-family:'Geist Mono', monospace;
+    font-size:14px;
+    color:#777;
+    margin-bottom:20px;
+  }
+  .slide{
+    width:1080px;
+    height:1350px;
+    position:relative;
+    overflow:hidden;
+    background:var(--ink);
+    color:#fff;
+  }
+
+  /* ───── shared chrome ───── */
+  .rule-top{
+    position:absolute;
+    top:60px; left:0; right:0;
+    height:1px;
+    background:var(--blue);
+    z-index:5;
+  }
+  .masthead{
+    position:absolute;
+    top:24px; left:70px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:700;
+    font-size:20px;
+    color:#fff;
+    z-index:5;
+  }
+  .masthead .dot{
+    width:8px; height:8px;
+    border-radius:50%;
+    background:var(--blue);
+  }
+  .issue-label{
+    position:absolute;
+    top:30px; right:70px;
+    font-family:'Geist Mono', monospace;
+    font-size:13px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    z-index:5;
+  }
+  .edge-vertical{
+    position:absolute;
+    top:50%; right:28px;
+    transform:translateY(-50%) rotate(90deg);
+    transform-origin:center;
+    font-family:'Geist Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.15em;
+    color:rgba(255,255,255,0.25);
+    white-space:nowrap;
+    z-index:5;
+  }
+  .folio{
+    position:absolute;
+    bottom:50px; left:70px;
+    font-family:'Geist Mono', monospace;
+    font-size:14px;
+    color:rgba(255,255,255,0.4);
+    z-index:5;
+  }
+  .slide.on-blue .rule-top{ background:var(--ink); }
+  .slide.on-blue .masthead{ color:var(--ink); }
+  .slide.on-blue .masthead .dot{ background:var(--ink); }
+  .slide.on-blue .issue-label{ color:rgba(6,26,58,0.55); }
+  .slide.on-blue .edge-vertical{ color:rgba(6,26,58,0.3); }
+  .slide.on-blue .folio{ color:rgba(6,26,58,0.45); }
+
+  /* ════════ SLIDE 1 — HOOK ════════ */
+  #s1 .watermark{
+    position:absolute;
+    top:140px; left:50px;
+    font-weight:700;
+    font-size:230px;
+    color:rgba(255,255,255,0.06);
+    transform:rotate(-6deg);
+    transform-origin:left center;
+    white-space:nowrap;
+    z-index:0;
+  }
+  #s1 svg.strike{
+    position:absolute;
+    top:170px; left:0;
+    z-index:1;
+  }
+  #s1 .hook{
+    position:absolute;
+    bottom:170px; left:70px;
+    right:70px;
+    z-index:2;
+  }
+  #s1 .h-a{ font-weight:400; font-size:48px; color:rgba(255,255,255,0.8); }
+  #s1 .h-b{ font-weight:700; font-size:130px; line-height:1; margin-left:-6px; color:#fff; }
+  #s1 .h-c{ font-weight:600; font-size:50px; color:#fff; margin-top:6px; }
+  #s1 .h-d{ font-weight:400; font-size:44px; color:rgba(255,255,255,0.85); margin-top:30px; }
+  #s1 .h-e{ font-weight:700; font-size:54px; color:var(--amber); }
+  #s1 .cta{
+    position:absolute;
+    bottom:60px; right:70px;
+    font-family:'Geist Mono', monospace;
+    font-size:24px;
+    color:var(--blue);
+  }
+
+  /* ════════ SLIDE 2 — COSTO DEL TIEMPO ════════ */
+  #s2 .label{
+    position:absolute; top:130px; left:70px;
+    font-family:'Geist Mono', monospace;
+    font-size:18px; letter-spacing:0.08em;
+    color:var(--blue-light);
+  }
+  #s2 .giant{
+    position:absolute;
+    top:210px; right:70px;
+    font-weight:700;
+    font-size:180px;
+    color:var(--blue);
+    line-height:1;
+    white-space:nowrap;
+    z-index:0;
+  }
+  #s2 .headline{
+    position:absolute; top:480px; left:70px; right:70px;
+  }
+  #s2 .hl-a{ font-weight:600; font-size:44px; color:#fff; }
+  #s2 .hl-b{ font-weight:700; font-size:56px; color:#fff; }
+  #s2 .body{
+    position:absolute; bottom:330px; left:70px; right:110px;
+    font-weight:400; font-size:32px; line-height:1.45;
+    color:rgba(255,255,255,0.8);
+  }
+  #s2 .quote{
+    position:absolute; bottom:120px; left:70px; right:110px;
+    border-left:3px solid var(--blue);
+    padding-left:26px;
+    font-weight:700; font-size:34px; line-height:1.3;
+    color:#fff;
+  }
+  #s2 .quote span{ color:var(--blue); }
+
+  /* ════════ SLIDE 3 — LOS ERRORES ════════ */
+  #s3 .label{
+    position:absolute; top:130px; left:70px;
+    font-family:'Geist Mono', monospace;
+    font-size:18px; letter-spacing:0.08em;
+    color:var(--red);
+  }
+  #s3 .watermark{
+    position:absolute;
+    top:200px; left:50px;
+    font-weight:700;
+    font-size:210px;
+    color:rgba(239,68,68,0.12);
+    transform:rotate(4deg);
+    transform-origin:left center;
+    white-space:nowrap;
+    z-index:0;
+  }
+  #s3 .list{
+    position:absolute; top:480px; left:70px; right:90px;
+  }
+  #s3 .item{
+    display:flex; align-items:baseline; gap:24px;
+    padding:30px 0;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+  }
+  #s3 .item:first-child{ border-top:1px solid rgba(255,255,255,0.1); }
+  #s3 .idx{
+    font-family:'Geist Mono', monospace;
+    font-size:40px;
+    color:rgba(239,68,68,0.5);
+  }
+  #s3 .txt{
+    font-weight:600; font-size:38px; color:#fff;
+  }
+  #s3 .quote{
+    position:absolute; bottom:130px; left:70px; right:90px;
+    font-weight:700; font-size:40px; line-height:1.3;
+    color:#fff;
+  }
+  #s3 .quote span{ color:var(--red); }
+
+  /* ════════ SLIDE 4 — LO QUE NO DEDUCÍS ════════ */
+  #s4 .label{
+    position:absolute; top:130px; left:70px;
+    font-family:'Geist Mono', monospace;
+    font-size:18px; letter-spacing:0.08em;
+    color:var(--amber);
+  }
+  #s4 .giant{
+    position:absolute;
+    top:240px; left:60px;
+    font-weight:700;
+    font-size:240px;
+    color:var(--amber);
+    transform:rotate(-4deg);
+    white-space:nowrap;
+    z-index:0;
+    line-height:1;
+  }
+  #s4 .right-block{
+    position:absolute; top:600px; right:70px;
+    text-align:right;
+    z-index:1;
+  }
+  #s4 .rb-a{ font-weight:700; font-size:56px; color:#fff; }
+  #s4 .rb-b{ font-weight:700; font-size:72px; color:#fff; }
+  #s4 .body{
+    position:absolute; bottom:260px; left:70px; right:70px;
+    font-weight:400; font-size:34px; line-height:1.45;
+    color:rgba(255,255,255,0.8);
+  }
+  #s4 .caption{
+    position:absolute; bottom:130px; left:70px;
+    font-weight:400; font-style:italic; font-size:36px;
+    color:var(--amber);
+  }
+
+  /* ════════ SLIDE 5 — DECIDIR A CIEGAS ════════ */
+  #s5 .label{
+    position:absolute; top:130px; left:70px;
+    font-family:'Geist Mono', monospace;
+    font-size:18px; letter-spacing:0.08em;
+    color:var(--blue-light);
+  }
+  #s5 .watermark{
+    position:absolute;
+    top:170px; left:70px;
+    font-weight:700;
+    font-size:190px;
+    color:rgba(255,255,255,0.07);
+    transform:rotate(-5deg);
+    white-space:nowrap;
+    z-index:0;
+  }
+  #s5 .stack{
+    position:absolute; top:430px; left:70px; right:0;
+    z-index:1;
+  }
+  #s5 .st-a{ font-weight:400; font-size:46px; color:rgba(255,255,255,0.85); }
+  #s5 .st-b{ font-weight:600; font-size:52px; color:#fff; margin-top:4px; }
+  #s5 .st-c{ font-weight:400; font-size:46px; color:rgba(255,255,255,0.85); margin-top:4px; }
+  #s5 .st-d{ font-weight:700; font-size:90px; color:var(--blue); margin-top:10px; line-height:1; }
+  #s5 .tags{
+    position:absolute; top:870px; left:70px;
+    font-family:'Geist Mono', monospace;
+    font-size:26px;
+    color:rgba(255,255,255,0.6);
+  }
+  #s5 .quote{
+    position:absolute; bottom:130px; left:70px; right:90px;
+    border-left:3px solid var(--red);
+    padding-left:26px;
+    font-weight:700; font-size:42px; line-height:1.3;
+    color:#fff;
+  }
+
+  /* ════════ SLIDE 6 — LA CUENTA REAL ════════ */
+  #s6 .label{
+    position:absolute; top:130px; left:70px;
+    font-family:'Geist Mono', monospace;
+    font-size:18px; letter-spacing:0.08em;
+    color:var(--amber);
+  }
+  #s6 .title{
+    position:absolute; top:200px; left:70px; right:0;
+  }
+  #s6 .t-a{ font-weight:700; font-size:64px; color:#fff; }
+  #s6 .t-b{ font-weight:700; font-size:110px; color:var(--amber); line-height:1; }
+  #s6 .sum{
+    position:absolute; top:480px; left:70px; right:70px;
+  }
+  #s6 .row{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:24px 0;
+    border-bottom:1px solid rgba(255,255,255,0.12);
+  }
+  #s6 .row:first-child{ border-top:1px solid rgba(255,255,255,0.12); }
+  #s6 .lbl{ font-weight:600; font-size:34px; color:#fff; }
+  #s6 .val{ font-family:'Geist Mono', monospace; font-weight:700; font-size:34px; color:var(--amber); }
+  #s6 .heavy-rule{
+    position:absolute; top:870px; left:70px; right:70px;
+    height:2px; background:var(--blue);
+  }
+  #s6 .conclusion{
+    position:absolute; top:910px; left:70px; right:90px;
+    font-weight:700; font-size:40px; line-height:1.3;
+    color:#fff;
+  }
+  #s6 .note{
+    position:absolute; bottom:100px; left:70px; right:90px;
+    font-weight:400; font-style:italic; font-size:30px;
+    color:rgba(255,255,255,0.7);
+  }
+
+  /* ════════ SLIDE 7 — EL GIRO ════════ */
+  #s7 .label{
+    position:absolute; top:130px; left:70px;
+    font-family:'Geist Mono', monospace;
+    font-size:18px; letter-spacing:0.08em;
+    color:var(--green);
+  }
+  #s7 .block{
+    position:absolute; top:230px; left:70px; right:0;
+  }
+  #s7 .b-a{ font-weight:400; font-size:52px; color:rgba(255,255,255,0.85); }
+  #s7 .b-b-wrap{ position:relative; display:inline-block; }
+  #s7 .b-b{ font-weight:700; font-size:130px; color:#fff; line-height:1; }
+  #s7 .b-b-wrap svg{ position:absolute; top:50%; left:-4%; }
+  #s7 .b-c{ font-weight:600; font-size:50px; color:#fff; margin-top:50px; }
+  #s7 .b-d{ font-weight:600; font-size:50px; color:#fff; }
+  #s7 .b-e{ font-weight:700; font-size:78px; color:var(--green); line-height:1; }
+  #s7 .quote{
+    position:absolute; bottom:130px; left:70px; right:90px;
+    border-left:3px solid var(--green);
+    padding-left:26px;
+    font-weight:700; font-size:38px; line-height:1.3;
+    color:#fff;
+  }
+  #s7 .quote span{ color:var(--green); }
+
+  /* ════════ SLIDE 8 — CTA (blue bg) ════════ */
+  #s8{ background:var(--blue); }
+  #s8 .giant{
+    position:absolute;
+    bottom:-60px; right:-60px;
+    font-weight:700;
+    font-size:360px;
+    color:var(--ink);
+    line-height:1;
+    z-index:0;
+  }
+  #s8 .top-block{
+    position:absolute; top:230px; left:70px; right:90px;
+    z-index:1;
+  }
+  #s8 .tb-a{ font-weight:700; font-size:64px; color:#fff; }
+  #s8 .tb-b{ font-weight:600; font-size:52px; color:#fff; margin-top:4px; }
+  #s8 .tb-c{ font-weight:400; font-size:56px; color:#fff; margin-top:36px; }
+  #s8 .tb-d{ font-weight:700; font-size:96px; color:var(--ink); line-height:1; }
+  #s8 .mid{
+    position:absolute; top:740px; left:70px; right:90px;
+    font-weight:400; font-size:32px; color:rgba(255,255,255,0.9);
+    z-index:1;
+  }
+  #s8 .cta{
+    position:absolute; top:830px; left:70px;
+    z-index:1;
+  }
+  #s8 .cta-a{ font-weight:700; font-size:56px; color:#fff; }
+  #s8 .cta-b{ font-family:'Geist Mono', monospace; font-weight:500; font-size:26px; color:rgba(255,255,255,0.85); margin-top:8px; }
+  #s8 .footer{
+    position:absolute; bottom:110px; left:70px;
+    z-index:1;
+  }
+  #s8 .f-a{ font-weight:700; font-size:28px; color:#fff; }
+  #s8 .f-b{ font-weight:400; font-size:18px; color:rgba(255,255,255,0.7); margin-top:6px; }
+</style>
+</head>
+<body>
+<div class="tip">Cmd+Shift+4 para capturar</div>
+
+<!-- ════════ SLIDE 1 ════════ -->
+<div class="slide" id="s1">
+  <div class="watermark">GRATIS</div>
+  <svg class="strike" width="1080" height="200" viewBox="0 0 1080 200">
+    <path d="M 40 120 Q 540 60 1040 130" stroke="#EF4444" stroke-width="6" fill="none" stroke-linecap="round"/>
+  </svg>
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">El costo invisible · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — LO QUE TE CUESTA HACER DE CONTADOR</div>
+
+  <div class="hook">
+    <p class="h-a">Creés que</p>
+    <p class="h-b">AHORRÁS</p>
+    <p class="h-c">por no tener contador.</p>
+    <p class="h-d">Pero estás pagando</p>
+    <p class="h-e">más caro de lo que pensás.</p>
+  </div>
+  <div class="cta">El costo invisible →</div>
+  <div class="folio">01 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 2 ════════ -->
+<div class="slide" id="s2">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">El costo invisible · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — LO QUE TE CUESTA HACER DE CONTADOR</div>
+
+  <div class="label">COSTO 01 · TU TIEMPO</div>
+  <div class="giant">168 hs</div>
+  <div class="headline">
+    <p class="hl-a">es lo que perdés al año</p>
+    <p class="hl-b">haciendo de contador.</p>
+  </div>
+  <div class="body">Cada hora con planillas, facturas y vencimientos es una hora que NO estás vendiendo, atendiendo ni creciendo.</div>
+  <div class="quote">¿Cuánto vale <span>tu hora</span>? Multiplicalo. Ahí está el primer costo.</div>
+  <div class="folio">02 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 3 ════════ -->
+<div class="slide" id="s3">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">El costo invisible · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — LO QUE TE CUESTA HACER DE CONTADOR</div>
+
+  <div class="label">COSTO 02 · LOS ERRORES</div>
+  <div class="watermark">MULTA</div>
+  <div class="list">
+    <div class="item"><span class="idx">01</span><span class="txt">Una declaración mal cargada.</span></div>
+    <div class="item"><span class="idx">02</span><span class="txt">Un vencimiento que se te pasó.</span></div>
+    <div class="item"><span class="idx">03</span><span class="txt">Un comprobante mal hecho.</span></div>
+  </div>
+  <div class="quote">No los ves hasta que llega la multa. Y la multa <span>SIEMPRE</span> cuesta más que el contador.</div>
+  <div class="folio">03 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 4 ════════ -->
+<div class="slide" id="s4">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">El costo invisible · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — LO QUE TE CUESTA HACER DE CONTADOR</div>
+
+  <div class="label">COSTO 03 · LO QUE NO DEDUCÍS</div>
+  <div class="giant">+10%</div>
+  <div class="right-block">
+    <p class="rb-a">de impuesto de más</p>
+    <p class="rb-b">cada mes.</p>
+  </div>
+  <div class="body">Hay gastos que podés descontar y no lo hacés porque no sabés que se puede.</div>
+  <div class="caption">Plata que se va, en silencio.</div>
+  <div class="folio">04 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 5 ════════ -->
+<div class="slide" id="s5">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">El costo invisible · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — LO QUE TE CUESTA HACER DE CONTADOR</div>
+
+  <div class="label">COSTO 04 · DECIDIR A CIEGAS</div>
+  <div class="watermark">A OJO</div>
+  <div class="stack">
+    <p class="st-a">Sin números claros,</p>
+    <p class="st-b">las decisiones grandes</p>
+    <p class="st-c">las tomás</p>
+    <p class="st-d">POR INTUICIÓN.</p>
+  </div>
+  <div class="tags">contratar · expandirte · comprar</div>
+  <div class="quote">Y la intuición, en plata, sale cara.</div>
+  <div class="folio">05 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 6 ════════ -->
+<div class="slide" id="s6">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">El costo invisible · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — LO QUE TE CUESTA HACER DE CONTADOR</div>
+
+  <div class="label">LA SUMA</div>
+  <div class="title">
+    <p class="t-a">Hagamos la cuenta</p>
+    <p class="t-b">REAL.</p>
+  </div>
+  <div class="sum">
+    <div class="row"><span class="lbl">Tu tiempo perdido</span><span class="val">G. ???</span></div>
+    <div class="row"><span class="lbl">Multas evitables</span><span class="val">G. ???</span></div>
+    <div class="row"><span class="lbl">Impuestos de más</span><span class="val">G. ???</span></div>
+    <div class="row"><span class="lbl">Malas decisiones</span><span class="val">G. ???</span></div>
+  </div>
+  <div class="heavy-rule"></div>
+  <div class="conclusion">= el costo de "ahorrarte" un contador.</div>
+  <div class="note">Casi siempre, mayor que sus honorarios.</div>
+  <div class="folio">06 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 7 ════════ -->
+<div class="slide" id="s7">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">El costo invisible · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — LO QUE TE CUESTA HACER DE CONTADOR</div>
+
+  <div class="label">EL GIRO</div>
+  <div class="block">
+    <p class="b-a">Un contador no es</p>
+    <p class="b-b-wrap">
+      <span class="b-b">un GASTO.</span>
+      <svg width="400" height="40" viewBox="0 0 400 40">
+        <path d="M 10 20 Q 200 5 390 22" stroke="#EF4444" stroke-width="6" fill="none" stroke-linecap="round"/>
+      </svg>
+    </p>
+    <p class="b-c">Es quien te cuida</p>
+    <p class="b-d">la plata que ya</p>
+    <p class="b-e">estás PERDIENDO.</p>
+  </div>
+  <div class="quote">La pregunta no es cuánto cuesta. Es <span>cuánto estás perdiendo</span> sin él.</div>
+  <div class="folio">07 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 8 ════════ -->
+<div class="slide on-blue" id="s8">
+  <div class="giant">HOY.</div>
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">El costo invisible · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — LO QUE TE CUESTA HACER DE CONTADOR</div>
+
+  <div class="top-block">
+    <p class="tb-a">No es caro</p>
+    <p class="tb-b">contratar un contador.</p>
+    <p class="tb-c">Es caro</p>
+    <p class="tb-d">NO TENERLO.</p>
+  </div>
+  <div class="mid">¿Querés saber cuánto estás perdiendo hoy?</div>
+  <div class="cta">
+    <p class="cta-a">Escribime.</p>
+    <p class="cta-b">@naberolconta</p>
+  </div>
+  <div class="footer">
+    <p class="f-a">naberol.</p>
+    <p class="f-b">Claridad fiscal, con diseño.</p>
+  </div>
+  <div class="folio">08 / 08</div>
+</div>
+
+</body>
+</html>

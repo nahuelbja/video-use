@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carrusel Editorial — Estado de tu RUC · naberol.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:ital,wght@0,400;0,600;0,700;1,400&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 40px 0;
+    width: 100%;
+    background: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    font-family: 'Geist', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #hint {
+    color: #888;
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px;
+  }
+
+  .slide {
+    width: 1080px;
+    height: 1350px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: #061A3A;
+    flex-shrink: 0;
+  }
+  .slide.bg-blue { background: #1E7AF5; }
+
+  p { margin: 0; }
+
+  /* ── Shared editorial chrome ── */
+  .rule-top {
+    position: absolute;
+    top: 60px; left: 0;
+    width: 100%; height: 1px;
+    background: #1E7AF5;
+  }
+  .bg-blue .rule-top { background: #FFFFFF; }
+
+  .masthead {
+    position: absolute;
+    top: 82px; left: 70px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .masthead .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #1E7AF5;
+    flex-shrink: 0;
+  }
+  .bg-blue .masthead .dot { background: #061A3A; }
+  .masthead span {
+    font-weight: 700;
+    font-size: 20px;
+    color: #FFFFFF;
+  }
+
+  .issue-label {
+    position: absolute;
+    top: 84px; right: 70px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .bg-blue .issue-label { color: rgba(255,255,255,0.75); }
+
+  .edge-vertical {
+    position: absolute;
+    top: 50%; right: -180px;
+    transform: rotate(90deg);
+    transform-origin: center;
+    width: 420px;
+    text-align: center;
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.25);
+    white-space: nowrap;
+  }
+  .bg-blue .edge-vertical { color: rgba(255,255,255,0.35); }
+
+  .folio {
+    position: absolute;
+    bottom: 50px; left: 70px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+  }
+  .bg-blue .folio { color: rgba(255,255,255,0.6); }
+
+  /* ════════ SLIDE 1 ════════ */
+  #e1 .giant-frac {
+    position: absolute;
+    top: 290px; left: 0; right: 0;
+    text-align: center;
+    font-weight: 700;
+    font-size: 380px;
+    line-height: 1;
+    color: #F59E0B;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    z-index: 1;
+  }
+  #e1 .hook-block {
+    position: absolute;
+    bottom: 380px; left: 70px;
+    right: 110px;
+    z-index: 2;
+  }
+  #e1 .h-1 { font-weight: 700; font-size: 52px; color: #FFFFFF; line-height: 1.15; }
+  #e1 .h-2 { font-weight: 400; font-size: 44px; color: rgba(255,255,255,0.8); line-height: 1.2; }
+  #e1 .h-3 { font-weight: 700; font-size: 58px; color: #FFFFFF; line-height: 1.2; }
+  #e1 .h-3 .red { color: #EF4444; }
+  #e1 .h-3 .amber { color: #F59E0B; }
+  #e1 .sos {
+    font-family: 'Geist Mono', monospace;
+    font-size: 24px;
+    color: #1E7AF5;
+    margin-top: 36px;
+  }
+  #e1 .caption {
+    position: absolute;
+    bottom: 50px; right: 70px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 16px;
+    color: rgba(255,255,255,0.5);
+    text-align: right;
+  }
+
+  /* ════════ SLIDE 2 ════════ */
+  #e2 .split-line {
+    position: absolute;
+    top: 160px; bottom: 260px;
+    left: 50%;
+    width: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+  #e2 .col {
+    position: absolute;
+    top: 200px;
+    width: 540px;
+    height: 850px;
+  }
+  #e2 .col-left  { left: 0; }
+  #e2 .col-right { left: 540px; }
+  #e2 .rot-word {
+    position: absolute;
+    font-weight: 700;
+    font-size: 72px;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+  #e2 .rot-left {
+    color: #EF4444;
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    left: 28px;
+    top: 680px;
+  }
+  #e2 .rot-right {
+    color: #F59E0B;
+    transform: rotate(90deg);
+    transform-origin: right top;
+    right: 28px;
+    top: 680px;
+  }
+  #e2 .col-text {
+    position: absolute;
+    top: 280px;
+    font-weight: 400;
+    font-size: 30px;
+    color: #FFFFFF;
+    line-height: 1.5;
+  }
+  #e2 .col-left .col-text  { left: 130px; right: 50px; }
+  #e2 .col-right .col-text { left: 50px; right: 130px; }
+  #e2 .col-tag {
+    position: absolute;
+    top: 200px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+  }
+  #e2 .col-left .col-tag  { left: 130px; color: #EF4444; }
+  #e2 .col-right .col-tag { left: 50px; color: #F59E0B; }
+  #e2 .bottom-strip {
+    position: absolute;
+    bottom: 130px; left: 70px; right: 110px;
+  }
+  #e2 .bottom-strip p {
+    font-weight: 700;
+    font-size: 36px;
+    color: #FFFFFF;
+    line-height: 1.4;
+    display: inline;
+    border-bottom: 2px solid #1E7AF5;
+    padding-bottom: 4px;
+  }
+
+  /* ════════ SLIDE 3 ════════ */
+  #e3 .head {
+    position: absolute;
+    top: 150px; left: 70px; right: 0;
+  }
+  #e3 .head .lead { font-weight: 400; font-size: 56px; color: #FFFFFF; line-height: 1.1; }
+  #e3 .head .big {
+    font-weight: 700;
+    font-size: 140px;
+    color: #1E7AF5;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  #e3 .causes {
+    position: absolute;
+    top: 430px; left: 70px; right: 110px;
+  }
+  #e3 .cause {
+    display: flex;
+    align-items: baseline;
+    gap: 32px;
+    padding: 26px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  #e3 .cause:last-child { border-bottom: none; }
+  #e3 .cause .idx {
+    font-family: 'Geist Mono', monospace;
+    font-size: 44px;
+    color: rgba(30,122,245,0.5);
+    flex-shrink: 0;
+  }
+  #e3 .cause .txt {
+    font-weight: 600;
+    font-size: 32px;
+    color: #FFFFFF;
+    line-height: 1.3;
+  }
+  #e3 .bottom-cap {
+    position: absolute;
+    bottom: 110px; left: 70px;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 26px;
+    color: #F59E0B;
+  }
+
+  /* ════════ SLIDE 4 ════════ */
+  #e4 .watermark {
+    position: absolute;
+    top: 380px; left: -120px;
+    font-weight: 700;
+    font-size: 300px;
+    color: rgba(239,68,68,0.12);
+    transform: rotate(-8deg);
+    white-space: nowrap;
+    letter-spacing: -0.02em;
+    z-index: 1;
+  }
+  #e4 .loss-list {
+    position: absolute;
+    top: 300px; left: 70px; right: 110px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 78px;
+  }
+  #e4 .loss {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  #e4 .loss .x {
+    font-weight: 700;
+    font-size: 30px;
+    color: #EF4444;
+    flex-shrink: 0;
+    line-height: 1.4;
+  }
+  #e4 .loss .txt {
+    font-weight: 600;
+    font-size: 34px;
+    color: #FFFFFF;
+    line-height: 1.35;
+  }
+  #e4 .pull-quote {
+    position: absolute;
+    bottom: 120px; left: 70px; right: 140px;
+    border-left: 3px solid #EF4444;
+    padding-left: 28px;
+    z-index: 2;
+  }
+  #e4 .pull-quote p {
+    font-weight: 400;
+    font-style: italic;
+    font-size: 30px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.45;
+  }
+
+  /* ════════ SLIDE 5 ════════ */
+  #e5 .head {
+    position: absolute;
+    top: 150px; left: 70px;
+  }
+  #e5 .head .l1 { font-weight: 700; font-size: 64px; color: #FFFFFF; line-height: 1.1; }
+  #e5 .head .l2 { font-weight: 700; font-size: 96px; color: #00B37A; line-height: 1.05; letter-spacing: -0.01em; }
+  #e5 .sub {
+    position: absolute;
+    top: 360px; left: 70px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 22px;
+    color: rgba(255,255,255,0.6);
+  }
+  #e5 .steps {
+    position: absolute;
+    top: 450px; left: 70px; right: 110px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  #e5 .step {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  #e5 .step .n {
+    font-weight: 700;
+    font-size: 120px;
+    color: rgba(0,179,122,0.4);
+    line-height: 1;
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+  #e5 .step .txt {
+    font-weight: 600;
+    font-size: 38px;
+    color: #FFFFFF;
+    line-height: 1.3;
+  }
+  #e5 .bottom-q {
+    position: absolute;
+    bottom: 120px; left: 70px;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 28px;
+    color: #4F99FF;
+  }
+
+  /* ════════ SLIDE 6 ════════ */
+  #e6 .head {
+    position: absolute;
+    top: 140px; left: 70px; right: 0;
+  }
+  #e6 .head .lead { font-weight: 400; font-size: 52px; color: #FFFFFF; line-height: 1.1; }
+  #e6 .head .big {
+    font-weight: 700;
+    font-size: 110px;
+    color: #00B37A;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  #e6 .steps {
+    position: absolute;
+    top: 390px; left: 70px; right: 110px;
+  }
+  #e6 .step {
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  #e6 .step:last-child { border-bottom: none; }
+  #e6 .step .tag {
+    font-family: 'Geist Mono', monospace;
+    font-size: 18px;
+    color: #00B37A;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 8px;
+  }
+  #e6 .step .txt {
+    font-weight: 600;
+    font-size: 32px;
+    color: #FFFFFF;
+    line-height: 1.3;
+  }
+  #e6 .bottom-cap {
+    position: absolute;
+    bottom: 110px; left: 70px;
+    font-weight: 400;
+    font-size: 26px;
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* ════════ SLIDE 7 ════════ */
+  #e7 .big-number {
+    position: absolute;
+    top: 220px; left: 70px;
+    font-weight: 700;
+    font-size: 150px;
+    color: #F59E0B;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+  }
+  #e7 .sub {
+    position: absolute;
+    top: 420px; left: 70px; right: 140px;
+    font-weight: 600;
+    font-size: 40px;
+    color: #FFFFFF;
+    line-height: 1.3;
+  }
+  #e7 .breakdown {
+    position: absolute;
+    top: 600px; left: 70px; right: 140px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  #e7 .breakdown p {
+    font-family: 'Geist Mono', monospace;
+    font-size: 24px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+  }
+  #e7 .pull-quote {
+    position: absolute;
+    bottom: 130px; left: 70px; right: 140px;
+    border-left: 3px solid #00B37A;
+    padding-left: 28px;
+  }
+  #e7 .pull-quote p {
+    font-weight: 700;
+    font-size: 36px;
+    color: #FFFFFF;
+    line-height: 1.4;
+  }
+  #e7 .pull-quote .hoy { color: #00B37A; }
+
+  /* ════════ SLIDE 8 ════════ */
+  #e8 .giant-hoy {
+    position: absolute;
+    bottom: -120px; right: -60px;
+    font-weight: 700;
+    font-size: 380px;
+    color: #061A3A;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    z-index: 1;
+  }
+  #e8 .head-block {
+    position: absolute;
+    top: 180px; left: 70px;
+    z-index: 2;
+  }
+  #e8 .head-block .l1 { font-weight: 700; font-size: 64px; color: #FFFFFF; line-height: 1.15; }
+  #e8 .head-block .l2 { font-weight: 700; font-size: 88px; color: #061A3A; line-height: 1.1; }
+  #e8 .mid {
+    position: absolute;
+    top: 560px; left: 70px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 26px;
+    color: rgba(255,255,255,0.9);
+    z-index: 2;
+  }
+  #e8 .cta {
+    position: absolute;
+    top: 680px; left: 70px; right: 280px;
+    z-index: 2;
+  }
+  #e8 .cta .ask {
+    font-weight: 600;
+    font-size: 40px;
+    color: #FFFFFF;
+    line-height: 1.3;
+  }
+  #e8 .cta .handle {
+    font-family: 'Geist Mono', monospace;
+    font-size: 24px;
+    color: rgba(255,255,255,0.85);
+    margin-top: 18px;
+  }
+  #e8 .brand-bottom {
+    position: absolute;
+    bottom: 50px; left: 70px;
+    z-index: 2;
+  }
+  #e8 .brand-bottom .b { font-weight: 700; font-size: 28px; color: #FFFFFF; }
+  #e8 .brand-bottom .t { font-weight: 400; font-size: 18px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+  #e8 .folio { left: auto; right: 70px; }
+</style>
+</head>
+<body>
+<div id="hint">Cmd+Shift+4 para capturar</div>
+
+<!-- ════════ SLIDE 1 — HOOK ════════ -->
+<div class="slide" id="e1">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">Alerta RUC · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — ESTADO DE TU RUC</div>
+
+  <div class="giant-frac">1/3</div>
+
+  <div class="hook-block">
+    <p class="h-1">de cada 3 contribuyentes</p>
+    <p class="h-2">en Paraguay está</p>
+    <p class="h-3"><span class="red">BLOQUEADO</span> o <span class="amber">SUSPENDIDO</span>.</p>
+    <p class="sos">¿Sos vos? →</p>
+  </div>
+
+  <div class="caption">+1.300.000 RUC registrados · +30% con restricciones</div>
+  <div class="folio">01 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 2 — DEFINICIONES ════════ -->
+<div class="slide" id="e2">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">Alerta RUC · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — ESTADO DE TU RUC</div>
+
+  <div class="split-line"></div>
+
+  <div class="col col-left">
+    <div class="rot-word rot-left">BLOQUEADO</div>
+    <div class="col-tag">ESTADO 01</div>
+    <p class="col-text">Tu RUC está activo pero con restricciones. No podés emitir facturas ni documentos tributarios.</p>
+  </div>
+
+  <div class="col col-right">
+    <div class="rot-word rot-right">SUSPENDIDO</div>
+    <div class="col-tag">ESTADO 02</div>
+    <p class="col-text">Suspendido de oficio por la DNIT. Para el fisco, tu empresa no existe operativamente.</p>
+  </div>
+
+  <div class="bottom-strip">
+    <p>En ambos casos: no facturás, no vendés legal, no licitás.</p>
+  </div>
+
+  <div class="folio">02 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 3 — CAUSAS ════════ -->
+<div class="slide" id="e3">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">Alerta RUC · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — ESTADO DE TU RUC</div>
+
+  <div class="head">
+    <p class="lead">¿Por qué te</p>
+    <p class="big">BLOQUEAN?</p>
+  </div>
+
+  <div class="causes">
+    <div class="cause"><span class="idx">01</span><span class="txt">Omisión de declaraciones (IVA, IRE, IRP)</span></div>
+    <div class="cause"><span class="idx">02</span><span class="txt">Deudas impagas con la DNIT</span></div>
+    <div class="cause"><span class="idx">03</span><span class="txt">Datos desactualizados en tu RUC</span></div>
+    <div class="cause"><span class="idx">04</span><span class="txt">Timbrado vencido sin renovar</span></div>
+    <div class="cause"><span class="idx">05</span><span class="txt">Inactividad prolongada sin comunicar</span></div>
+  </div>
+
+  <p class="bottom-cap">Cualquiera te frena de un día para el otro.</p>
+  <div class="folio">03 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 4 — CONSECUENCIAS ════════ -->
+<div class="slide" id="e4">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">Alerta RUC · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — ESTADO DE TU RUC</div>
+
+  <div class="watermark">PERDÉS</div>
+
+  <div class="loss-list">
+    <div class="loss"><span class="x">✕</span><span class="txt">No emitís facturas → perdés ventas</span></div>
+    <div class="loss"><span class="x">✕</span><span class="txt">Tus clientes no deducen el IVA</span></div>
+    <div class="loss"><span class="x">✕</span><span class="txt">Sin contratos con el Estado (DNCP)</span></div>
+    <div class="loss"><span class="x">✕</span><span class="txt">Multas por cada declaración omitida</span></div>
+    <div class="loss"><span class="x">✕</span><span class="txt">Afecta tus obligaciones patronales</span></div>
+  </div>
+
+  <div class="pull-quote">
+    <p>Muchos no se enteran hasta que el problema ya está encima.</p>
+  </div>
+
+  <div class="folio">04 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 5 — CÓMO SABER ════════ -->
+<div class="slide" id="e5">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">Alerta RUC · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — ESTADO DE TU RUC</div>
+
+  <div class="head">
+    <p class="l1">¿Estás bloqueado</p>
+    <p class="l2">AHORA MISMO?</p>
+  </div>
+
+  <p class="sub">Revisalo gratis en 2 minutos:</p>
+
+  <div class="steps">
+    <div class="step"><span class="n">1</span><span class="txt">Entrá a dnit.gov.py</span></div>
+    <div class="step"><span class="n">2</span><span class="txt">Andá a Consulta de RUC o al portal Marangatú</span></div>
+    <div class="step"><span class="n">3</span><span class="txt">Revisá tu estado y declaraciones pendientes</span></div>
+  </div>
+
+  <p class="bottom-q">¿Qué ves? ¿Todo en orden... o hay alertas?</p>
+  <div class="folio">05 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 6 — REGULARIZACIÓN ════════ -->
+<div class="slide" id="e6">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">Alerta RUC · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — ESTADO DE TU RUC</div>
+
+  <div class="head">
+    <p class="lead">El camino para</p>
+    <p class="big">REGULARIZARTE</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <span class="tag">PASO 01</span>
+      <span class="txt">Identificá qué originó el bloqueo</span>
+    </div>
+    <div class="step">
+      <span class="tag">PASO 02</span>
+      <span class="txt">Presentá las declaraciones pendientes en Marangatú</span>
+    </div>
+    <div class="step">
+      <span class="tag">PASO 03</span>
+      <span class="txt">Pagá la deuda o pedí plan de facilidades</span>
+    </div>
+    <div class="step">
+      <span class="tag">PASO 04</span>
+      <span class="txt">Actualizá tus datos del RUC</span>
+    </div>
+    <div class="step">
+      <span class="tag">PASO 05</span>
+      <span class="txt">Solicitá la rehabilitación de tu RUC</span>
+    </div>
+  </div>
+
+  <p class="bottom-cap">Con todo en regla, la reactivación es rápida.</p>
+  <div class="folio">06 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 7 — EL COSTO ════════ -->
+<div class="slide" id="e7">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">Alerta RUC · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — ESTADO DE TU RUC</div>
+
+  <div class="big-number">G. 1.500.000+</div>
+
+  <p class="sub">en multas por omitir 6 meses de IVA</p>
+
+  <div class="breakdown">
+    <p>Multa: 50% del impuesto omitido + intereses</p>
+    <p>IVA promedio G. 500.000/mes × 6 meses omitidos</p>
+  </div>
+
+  <div class="pull-quote">
+    <p>Solucionarlo <span class="hoy">HOY</span> siempre es más barato que esperar a que la DNIT te lo cobre con todo.</p>
+  </div>
+
+  <div class="folio">07 / 08</div>
+</div>
+
+<!-- ════════ SLIDE 8 — CTA ════════ -->
+<div class="slide bg-blue" id="e8">
+  <div class="rule-top"></div>
+  <div class="masthead"><div class="dot"></div><span>naberol.</span></div>
+  <div class="issue-label">Alerta RUC · 2026</div>
+  <div class="edge-vertical">NABEROL CONTABLE — ESTADO DE TU RUC</div>
+
+  <div class="giant-hoy">HOY.</div>
+
+  <div class="head-block">
+    <p class="l1">Tu RUC define</p>
+    <p class="l1">si podés operar</p>
+    <p class="l2">o no.</p>
+  </div>
+
+  <p class="mid">Revisá tu situación en dnit.gov.py</p>
+
+  <div class="cta">
+    <p class="ask">¿Necesitás orientación? Escribime.</p>
+    <p class="handle">@naberolconta — tu contador, sin vueltas. 🇵🇾</p>
+  </div>
+
+  <div class="brand-bottom">
+    <p class="b">naberol.</p>
+    <p class="t">Claridad fiscal, con diseño.</p>
+  </div>
+
+  <div class="folio">08 / 08</div>
+</div>
+
+</body>
+</html>
